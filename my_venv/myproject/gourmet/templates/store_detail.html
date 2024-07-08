@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}店舗詳細{% endblock %}
+
+{% block head %}
+<!--予約カレンダーのcssとjs-->
+<link rel="stylesheet" href="{% static 'css/default.css' %}">
+<link rel="stylesheet" href="{% static 'css/default.date.css' %}">
+<link rel="stylesheet" href= "{% static 'css/default.time.css' %}">
+
+<script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+<script src="{% static 'js/picker.js'%}"></script>
+<script src="{% static 'js/picker.date.js'%}"></script>
+<script src="{% static 'js/picker.time.js' %}"></script>
+<script src="{% static 'js/legacy.js'%}"></script>
+<script src="{% static 'js/lang-ja.js' %}"></script> 
+<script src="{% static 'js/main2.js' %}"></script>
+
+<!--skelton-tabの使用(base.htmlには適応しない)-->
+<link rel="stylesheet" href="{% static 'css/skeleton-tabs.css' %}">
+<link rel="stylesheet" href="{% static 'css/skeleton.css' %}">
+
+{% endblock %}
+
+{% block contents %}
+
+<!--タブのバー-->
+<div class="tab-container">
+  <ul class="tab-nav">
+    <li>
+      <a class="button active" href="#one">トップ</a>
+    </li>
+    <li>
+      <a class="button" href="#two">レビュー</a>
+    </li>
+    <li>
+      <a class="button" href="#three">その他</a>
+    </li>
+  </ul>
+</div>
+<!--タブのバー終了-->
+
+<!--タブの各ページ-->
+<div class="tab-content">
+
+<!--タブのバー1つめ-->
+  <div class="tab-pane active" id="one">
+    <div class="a_detail">
+      <div class="store-h1">
+          <h1>店舗詳細</h1>
+      </div>
+      <hr class="hr1 mb-5">
+      <!--カルーセル部分-->
+      <div id="carouselExample" class="carousel slide">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              {% if object.photo1 %}
+                  <img src="{{ object.photo1.url}}" class="d-block w-90" alt="...">
+              {% endif %}
+            </div>
+            <div class="carousel-item">
+              {% if object.photo2 %}
+                  <img src="{{ object.photo2.url}}" class="d-block w-90" alt="...">
+              {% endif %}
+            </div>
+            <div class="carousel-item">
+              {% if object.photo3 %}
+                  <img src="{{ object.photo3.url}}" class="d-block w-90" alt="...">
+              {% endif %}
+            </div>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="bi bi-arrow-left-circle-fill" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="bi bi-arrow-right-circle-fill" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+        <!--カルーセル終了-->
+  
+        <div class="row" style="margin-top:80px;">
+          <div class="store-info col-md-8" style="padding: 10px; margin-bottom: 10px; border: 1px dotted #333333; border-radius: 5px;">
+            <strong>{{ object.store_name }}</strong>
+            <div class="desc">
+                <u><p>店舗説明:</p></u>
+                <p>{{ object.store_detail }}</p>
+            </div>
+        </div>
+  
+        <!--カレンダーから予約するページ-->
+        <section class="section col-md-4">
+          <div class="section__block section__block--scoped">
+            <h3>予約する</h3>   
+  
+            <form method="post">
+              {% csrf_token %}
+              {{ form.as_p }}
+              <button type="submit"  id="submit" class="btn btn-success btn-lg">予約する</button>
+            </form>  
+  
+      <script>
+          $(document).ready(function(){
+            $('.js__datepicker').pickadate({
+              format: 'yyyy-mm-dd',
+              formatSubmit: 'yyyy-mm-dd',
+              hiddenName: true
+            });
+        
+            $('.js__timepicker').pickatime({
+              format: 'HH:i',
+              formatSubmit: 'HH:i',
+              hiddenName: true,
+              interval: 30,   // 表示間隔
+              min: [10,00],   // 予約開始時間
+              max: [20,00]    // 予約終了時間 
+            });
+          });   
+        </script>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--タブのバー1つめ(終了)-->
+
+  <!--タブのバー2つめ-->
+  <div class="tab-pane" id="two">
+    <div class="a_detail">
+      <div class="store-h1">
+          <h1>レビュー</h1>
+      </div>
+      <hr class="hr1 mb-5">
+      <a href="{% url 'gourmet:review_form' store_id=object.pk %}" class="btn btn-warning btn-lg">口コミを投稿する</a>
+      <div class="review">
+        <div class="stars">
+          <span>
+            <input id="review01" type="radio" name="review"><label for="review01">★(5)</label>
+            <input id="review02" type="radio" name="review"><label for="review02">★(4)</label>
+            <input id="review03" type="radio" name="review"><label for="review03">★(3)</label>
+            <input id="review04" type="radio" name="review"><label for="review04">★(2)</label>
+            <input id="review05" type="radio" name="review"><label for="review05">★(1)</label>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!--タブのバー3つめ-->
+  <div class="tab-pane" id="three">そのほか</div>
+</div>
+
+
+{% endblock %}

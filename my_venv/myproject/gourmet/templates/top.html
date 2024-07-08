@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}トップページ{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block contents %}
+
+  <!-- メインビジュアルのスライダー (開始)-->
+  <div class="mv01">
+  
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="slide">
+            <div class="slide-media img-cover"><img src="{% static 'images/image1.png' %}"></div>
+            <h2 class="slide-title">テキスト1テキスト1テキスト1</h2>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="slide">
+            <div class="slide-media img-cover"><img src="{% static 'images/image2.png' %}"></div>
+            <h2 class="slide-title">テキスト2テキスト2テキスト2</h2>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="slide">
+            <div class="slide-media img-cover"><img src="{% static 'images/image3.png' %}"></div>
+            <h2 class="slide-title">テキスト3テキスト3テキスト3</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- メインビジュアルのスライダー(終了) -->
+  
+<!-- カードタイプのカルーセル(開始) -->
+
+<div class="card01">
+  <h1 class="reco-title">おすすめのお店</h1>
+  <div class="l-inner">
+
+    <div class="swiper-area">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+          {% for storeinfo in storeinfo_list %}
+          <a href="{% url 'gourmet:detail' storeinfo.pk %}" class="swiper-slide">
+            <article class="slide">
+              <div class="slide-media img-cover">
+                {% if storeinfo.photo1 %} <!--写真がアップロードされている時とされていない時で場合分けする必要がある。-->
+                    <img src="{{ storeinfo.photo1.url }}" alt="">
+                {% else %}
+                    <img src="{% static 'media/noImage.png' %}" alt="No Image">
+                {% endif %}
+              </div>
+              <div class="slide-content">
+                <h2 class="slide-title">{{ storeinfo.store_name }}</h2>
+                <p class="p-category">ジャンル:{{ storeinfo.category}}</p>
+              </div>
+            </article>
+          </a>
+          {% empty %}
+          <p>店舗の登録がありません。</p>
+          {% endfor %}
+          
+        </div><!-- /swiper-wrapper -->
+      </div><!-- /swiper -->
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div><!-- /swiper-area -->
+    <div class="swiper-pagination"></div>
+
+  </div>
+</div>
+<!-- カードタイプのカルーセル(終了) -->
+
+
+
+
+
+
+
+{% endblock %}
