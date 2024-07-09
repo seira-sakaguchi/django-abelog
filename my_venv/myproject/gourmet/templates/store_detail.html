@@ -100,7 +100,7 @@
               {{ form.as_p }}
               <button type="submit"  id="submit" class="btn btn-success btn-lg">予約する</button>
             </form>  
-  
+            <a href="{% url 'gourmet:confirm' pk=object.pk %}">確認</a>
       <script>
           $(document).ready(function(){
             $('.js__datepicker').pickadate({

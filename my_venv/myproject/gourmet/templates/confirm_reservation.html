@@ -30,18 +30,18 @@
                     </tr>
                     <tr>
                         <th>予約日</th>
-                        <td>{{ reservation.date }}</td>
+                        <td>{{ date }}</td>
                     </tr>
                     <tr>
                         <th>予約時間</th>
-                        <td>{{ reservation.time }}〜</td>
+                        <td>{{ time }}〜</td>
                     </tr>
                     <tr>
                         <th>予約人数</th>
-                        <td>{{ reservation.persons }}名</td>
+                        <td>{{ persons }}名</td>
                     </tr>
                 </table>
-                <form action="{% url 'gourmet:confirm_reservation' reservation.id %}" method="post">
+                <form action="#" method="post">
                     {% csrf_token %}
                     <button type="submit">確定する</button>
                 </form>

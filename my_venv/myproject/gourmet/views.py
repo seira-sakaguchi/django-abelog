@@ -27,18 +27,43 @@ class StoreDetailView(generic.DetailView):
     
     #フォームから送信されたデータの処理
     def post(self, request, *args, **kwargs):
+        pk = self.kwargs['pk']
         self.object = self.get_object() #現在のStoreInfoオブジェクトを取得
         form = ReservationForm(request.POST)
 
         if form.is_valid():
-            reservation = form.save(commit=False)
-            reservation.user = request.user
-            reservation.store_name = self.object
-            reservation.save()
-            return redirect('gourmet:reservation_success', reservation_id=reservation.id)
+            self.request.session['form_date'] = form.data['date']
+            self.request.session['form_time'] = form.data['time']
+            self.request.session['form_persons'] = form.data['persons']
+            # reservation = form.save(commit=False)
+            # reservation.user = request.user
+            # reservation.store_name = self.object
+            # reservation.save()
+            return redirect('gourmet:confirm', pk=pk)
         
         #バリデーションに失敗した場合はフォームとともにテンプレートを再レンダリングする。
         return self.render_to_response(self.get_context_data(form=form))
+
+#予約確認画面  
+class ConfirmReservation(UpdateView):
+    model = Reservation
+    template_name = 'confirm_reservation.html'
+    form_class = ReservationForm
+    success_url = reverse_lazy('gourmet:reserve_list')
+
+    def get_object(self):
+        date = ''
+        time = ''
+        persons =''
+        if 'form_date' in self.request.session:
+            date = self.request.session.get('form_date')
+        if 'form_time' in self.request.session:
+            time = self.request.session.get('form_time')
+        if 'form_persons' in self.request.session:
+            persons = self.request.session.get('form_persons')
+        #現在ログインしているユーザーのオブジェクトを取得
+        print(date,time,persons)
+        return self.request.user
 
 
 #予約成功時に予約情報を表示するビュー 
@@ -62,15 +87,21 @@ class ReserveListView(LoginRequiredMixin,generic.ListView):
         return Reservation.objects.filter(user=self.request.user).order_by('date') #予約日が近い順に並び替え
     
 #予約キャンセル
-class ReserveDeleteView(DeleteView):
+class ReserveDeleteView(LoginRequiredMixin,DeleteView):
     model = Reservation
     success_url = reverse_lazy('gourmet:reserve_list')
     template_name = 'reservation_delete.html'
     
     #【質問】メッセージが表示されない。
-    def delete(self,request,*args,**kwargs):
+    # def delete(self,request,*args,**kwargs):
+    #     messages.success(self.request,"予約をキャンセルしました。")
+    #     print("check",messages)
+    #     return super().delete(request,*args,**kwargs)
+    
+    def form_valid(self,form):
         messages.success(self.request,"予約をキャンセルしました。")
-        return super().delete(request,*args,**kwargs)
+        return super().form_valid(form)
+
     
 #ユーザ情報ページ
 class ProFileView(LoginRequiredMixin,UpdateView):  
