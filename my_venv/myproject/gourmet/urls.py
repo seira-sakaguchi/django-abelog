@@ -11,5 +11,6 @@ urlpatterns = [
     path('reserve-list/',views.ReserveListView.as_view(), name='reserve_list'),
     path('reserve-delete/<int:pk>',views.ReserveDeleteView.as_view(),name='reserve_delete'),
     path('review/<int:store_id>/',views.submit_review,name='review_form'),
-    path('confirm/<int:pk>',views.ConfirmReservation.as_view(),name='confirm'),
+    path('confirm/',views.ConfirmReservation.as_view(),name='confirm'),
+    path('like/<int:store_id>',views.like_rest,name='like_rest'),
 ]

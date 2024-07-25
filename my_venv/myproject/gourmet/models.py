@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import UniqueConstraint
 from accounts.models import CustomUser
 
 from django.contrib.auth import get_user_model
@@ -51,16 +52,8 @@ class Reservation(models.Model):
 
 #レビュー
 class Review(models.Model):
-    SCORE_CHOICES = [
-        ('1', '★'),
-        ('2', '★★'),
-        ('3', '★★★'),
-        ('4', '★★★★'),
-        ('5', '★★★★★'),
-    ]
-
+    score = models.PositiveIntegerField(blank=False, default=1)
     store_name = models.ForeignKey(StoreInfo, verbose_name='店名',on_delete=models.PROTECT)
-    score = models.CharField(choices=SCORE_CHOICES, verbose_name='お店の評価',max_length=1)
     handle = models.CharField(verbose_name='ニックネーム',max_length=50)
     title = models.CharField(verbose_name='タイトル',max_length=50)
     content = models.TextField(verbose_name='レビュー内容')
@@ -69,3 +62,17 @@ class Review(models.Model):
 
     def __str__(self):
         return self.title
+    
+#お気に入り機能
+class Like(models.Model):
+    user = models.ForeignKey(CustomUser, verbose_name='ユーザー',on_delete=models.PROTECT)
+    fav = models.ForeignKey(StoreInfo, verbose_name='お気に入り店舗', on_delete=models.CASCADE) #StoreInfoクラスの各インスタンスを識別するための変数
+    create_at = models.DateTimeField(auto_now_add=True)
+
+    #userとfavの組み合わせが一意=同じユーザーが同じレビューに対して複数回いいねすることができないようにDBレベルで制約をつける。
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['user','fav'], name='unique_user_fav')
+        ]
+    def __str__(self):
+        return f"{self.user.username}が{self.fav.store_name}をいいねしました"

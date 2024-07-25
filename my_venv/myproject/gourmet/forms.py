@@ -36,16 +36,9 @@ class ReservationForm(forms.ModelForm):
 
 #レビューフォーム
 class ReviewForm(forms.ModelForm):
-    score = forms.ChoiceField(
-        label = 'お店の評価をしてください。',
-        choices = Review.SCORE_CHOICES,
-        widget = forms.RadioSelect
-    )
-
     class Meta:
         model = Review
         fields = ['score','handle','title','content']
-
     def __init__(self,*args,**kwargs):  
         super().__init__(*args,**kwargs)
         self.fields['handle'].widget.attrs['class']='form-control'

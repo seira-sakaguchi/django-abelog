@@ -757,7 +757,7 @@ a.btn--circle:hover {
 }
 
 /*店舗レビューページの星*/
-.a_detail .stars span{
+.star_row .stars span{
   display: flex;               /* 要素をフレックスボックスにする */
   flex-direction: row-reverse !important; /* 星を逆順に並べる */
   justify-content: center;   /* 逆順なので、左寄せにする */
@@ -777,5 +777,51 @@ a.btn--circle:hover {
 .a_detail.stars label:hover,
 .a_detail .stars label:hover ~ label,
 .a_detail .stars input[type='radio']:checked ~ label{
-  color: #F8C601;              /* 選択された星以降をすべて黄色にする */
+  color: #F8C601    !important   ;       /* 選択された星以降をすべて黄色にする */
+}
+
+
+/*レビュー一覧装飾*/
+/*外枠全体*/
+.review-box{
+  border: 2px solid rgb(237, 219, 192);
+  border-radius: 15px;
+  padding: 10px;
+  margin:20px;
+}
+
+.review-style{
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#star-color{
+  color: orange;
+  padding-left:15px;"
+}
+
+#rating-number{
+  color: red;
+  font-size: 25px;
+}
+
+.review-title{
+  text-decoration:underline;
+  text-decoration-style:dotted;
+  text-decoration-color: rgb(237, 219, 192);
+}
+
+/*いいねのハートマーク*/
+.fav{
+  text-align: right;
+}
+
+.fav button{
+  border: none;
+}
+
+#fav{
+  font-size: 20px;
+  color: red;
 }

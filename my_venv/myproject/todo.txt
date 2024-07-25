@@ -9,26 +9,21 @@
 
 
 【質問】
-・予約フォームをメソッドを使って実装したものの、viewで使っているメソッドがいまいち理解できない。
-・予約確定前に確認画面を入れたい。
-・予約フォーム部分のフィックス(画面スクロールでも固定位置に)
-・githubにキリの良いところでpushしているが履歴が途中で消えてしまった。同じリポジトリでもアップするフォルダが変わると前までのデータがなくなってしまう？
-・reserve_list.htmlで店舗名にリンクをつけている。{% url 'gourmet:detail' object.pk %}とするとページnotfoundとなるのはなぜ？
-・views.pyの予約キャンセル機能のビューでmessages.successが表示されない。
-・レビューの星のマークが反転しない。これをscoreとしてDBに保存したい。
+・レビュー機能で星のマークがmodels.pyのscoreフィールドと同期したのはなぜ？
+・return redirect('gourmet:reservation_success', reservation_id=new_reservation.id)
+reservation_idはrestaurant_idとは異なる数字になっている。(45とか)これは何？なぜ、reservation_id=restaurant_idが有効ではない？
+・get_context_dataについて
+・お気に入り機能の店舗IDについて　store.idは取得できず、storeinfo.idなら取得できた。これはなぜ？
+・views.pyの    context['user_likes'] = Like.objects.filter(user=self.request.user).values_list('fav',flat=True) #favはLikeモデルのフィールド名   ではvalues_listによって数字(店舗ID)だけ取得した。これはなぜ？
+
 
 【次回課題】
-・レビュー投稿後のメッセージの表示
-・お店の予約→vews.pyの理解促進
-・ナビバーのドロップダウン
-・レビュー投稿
-・お気に入り機能
+・お気に入り機能←ここから！！！！！！！！！
 ・予約完了メールの拡充
 ・必須のマーク
 ・管理者ページへのリンク
 
 【もうちょっとできたら】
-・星の評価機能
 ・一般ユーザー用検索画面
 ・予約一覧画面で日付が過ぎたら予約履歴に入るようにする。
 ・予約が完了したらメールに予約完了メールが行くようにする。
@@ -41,4 +36,5 @@ sakaaaaaaaucgi@gmail.com   注意：aは6つ
 seira7150
 
 【完了(工夫してできるようになったこと)】
+・お気に入りハートマークの非同期処理
 
