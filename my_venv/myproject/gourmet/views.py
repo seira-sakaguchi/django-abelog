@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import datetime
+from django.http import JsonResponse,HttpResponse
 
 
 
@@ -38,7 +39,7 @@ class StoreDetailView(generic.DetailView):
         '''【解説】
         fileter:userフィールドが現在のリクエストユーザーと一致するLikeオブジェクトを取得。
         values_list:なんで数字のみを取得???'''
-        
+
         return context
     
     #フォームから送信されたデータの処理
@@ -222,19 +223,40 @@ def submit_review(request,store_id):
     print("reviwsの中身",reviews)
     return render(request, 'review_form.html',{'form':form,'store': store})
     
-#お気に入り機能
-def like_rest(request,store_id):
-    store = get_object_or_404(StoreInfo, pk=store_id)
+# #お気に入り機能(同期処理)
+# def like_rest(request,store_id):
+#     store = get_object_or_404(StoreInfo, pk=store_id)
 
-    #トグル機能(createがTrueであればLikeオブジェクトが作成される。likeにLikeオブジェクト、createdにTrue or Falseが入る。True:オブジェクトが新たに作成された/False:すでに存在しているアンパッキングの書き方。)
-    like, created = Like.objects.get_or_create(user=request.user, fav=store)
+#     #トグル機能(createがTrueであればLikeオブジェクトが作成される。likeにLikeオブジェクト、createdにTrue or Falseが入る。True:オブジェクトが新たに作成された/False:すでに存在しているアンパッキングの書き方。)
+#     like, created = Like.objects.get_or_create(user=request.user, fav=store)
 
-    if not created:
-        #すでにnot created=not True= False=すでにオブジェクトが作成済みの場合
-        like.delete()
+#     if not created:
+#         #すでにnot created=not True= False=すでにオブジェクトが作成済みの場合
+#         like.delete()
     
-    print("チェック",store_id)
+#     print("チェック",store_id)
     
-    return redirect('gourmet:detail', pk=store_id)
+#     return redirect('gourmet:detail', pk=store_id)
 
+
+#新お気に入り機能(非同期処理try)
+
+def toggle_favorite(request, store_id):
+    if request.method == "POST":
+        store = get_object_or_404(StoreInfo, pk=store_id)
+        user = request.user
+
+        #トグル機能(createがTrueであればLikeオブジェクトが作成される。likeにLikeオブジェクト、createdにTrue or Falseが入る。True:オブジェクトが新たに作成された/False:すでに存在しているアンパッキングの書き方。)
+        like, created = Like.objects.get_or_create(user=request.user, fav=store) #Likeモデルの中からuserフィールドが現在のuser(request.user)かつ、favフィールド(いいねされた店舗)が現在閲覧している店舗(store)と一致しているオブジェクトを検索。
+
+        if not created: 
+            #すでにnot created=not True= False=すでにオブジェクトが作成済みの場合
+            like.delete()
+            status = 'removed'
+        else:
+            status = 'added'
+        
+         # いいねのカウントを取得して返す
+        count = Like.objects.filter(fav=store).count()
+        return JsonResponse({'status': status, 'count': count}) #djangoのビューからJSONレスポンスを返す。JsonResponseはpythonの辞書型をJSON形式のHTTPレスポンスに変換している。
     

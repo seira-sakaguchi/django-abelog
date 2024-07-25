@@ -54,3 +54,29 @@ const mySwiper2 = new Swiper('.card01 .swiper', {
     }
   },
 });
+
+//お気に入り機能(ハートマーク)の非同期処理
+document.addEventListener('DOMContentLoaded', ()=> { 
+  document.getElementById('fav-form').addEventListener('submit', (event)=> {
+      event.preventDefault(); //これがないとフォームが送信されてしまい、変なJSONデータのページに遷移してしまう。
+      const form = event.target;
+      const formData = new FormData(form);
+
+      fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+              'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+          }
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.status === 'added') {
+              document.getElementById('fav-btn').innerHTML = '<span id="fav"><i class="fa-solid fa-heart-circle-plus"></i></span>';
+          } else {
+              document.getElementById('fav-btn').innerHTML = 'お気に入りに追加<span id="non-fav"><i class="fa-regular fa-heart"></i></span>';
+          }
+          document.getElementById('like-count').innerText = `${data.count}件のいいねがあります。`;
+      });
+  });
+});

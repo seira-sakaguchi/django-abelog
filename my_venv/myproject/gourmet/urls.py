@@ -12,5 +12,5 @@ urlpatterns = [
     path('reserve-delete/<int:pk>',views.ReserveDeleteView.as_view(),name='reserve_delete'),
     path('review/<int:store_id>/',views.submit_review,name='review_form'),
     path('confirm/',views.ConfirmReservation.as_view(),name='confirm'),
-    path('like/<int:store_id>',views.like_rest,name='like_rest'),
+    path('like/<int:store_id>',views.toggle_favorite,name='toggle_favorite'), #like_rest(同期処理)からtoggle_favoriteb (非同期処理)に変更
 ]
