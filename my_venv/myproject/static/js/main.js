@@ -55,7 +55,7 @@ const mySwiper2 = new Swiper('.card01 .swiper', {
   },
 });
 
-//お気に入り機能(ハートマーク)の非同期処理
+//お気に入り機能(ハートマーク)の非同期処理(店舗詳細ページ)
 document.addEventListener('DOMContentLoaded', ()=> { 
   document.getElementById('fav-form').addEventListener('submit', (event)=> {
       event.preventDefault(); //これがないとフォームが送信されてしまい、変なJSONデータのページに遷移してしまう。
@@ -78,5 +78,45 @@ document.addEventListener('DOMContentLoaded', ()=> {
           }
           document.getElementById('like-count').innerText = `${data.count}件のいいねがあります。`;
       });
+  });
+});
+
+//お気に入りリストの解除ボタン
+document.addEventListener('DOMContentLoaded', () => {
+  const forms = document.querySelectorAll('.list-form'); //formはひとつだが、その中に複数のお気に入りボタンがあるため、書くボタンがどの店舗に対するアクションかを識別する必要がある。
+  forms.forEach(form => {
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const url = form.action;
+      const csrftoken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken,
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: new FormData(form)
+      })
+      .then(response => {
+        if (!response.ok) { //レスポンスが正常でない場合はエラーを投げる。
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data); // レスポンスの内容をコンソールに出力
+        const btn = form.querySelector('.list-btn');
+        if (data.status === 'added') {
+          btn.textContent = 'お気に入りを解除';
+          btn.classList.add('btn-design')
+        } else {
+          btn.innerHTML = 'お気に入り追加 <span><i class="fa-solid fa-heart"></i></span>';
+          btn.classList.remove('btn-design');
+          btn.classList.add('btn-add');
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
   });
 });

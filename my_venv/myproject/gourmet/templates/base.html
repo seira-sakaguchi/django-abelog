@@ -35,7 +35,7 @@
               <nav class="header__nav nav" id="js-nav">
                 <ul class="nav__items nav-items">
                   {% if user.is_authenticated %} <!--ユーザーログイン時-->
-                    <li class="nav-items__item"><a href="">♡お気に入り♡</a></li>
+                    <li class="nav-items__item"><a href="{% url 'gourmet:like_list'%}">♡お気に入り♡</a></li>
                     <li class="nav-items__item"><a href="{%url 'gourmet:reserve_list'%}">予約確認</a></li>
                     <!-- <li style="font-size: 20px;">|</li> -->
                     <div class="vr mt-2"></div>

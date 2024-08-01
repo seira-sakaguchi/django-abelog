@@ -9,6 +9,8 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import datetime
 from django.http import JsonResponse,HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum,Avg
 
 
 
@@ -16,13 +18,12 @@ from django.http import JsonResponse,HttpResponse
 class TopView(generic.ListView):
     model = StoreInfo
     template_name = 'top.html'
+    
 
 #店舗詳細ページ
 class StoreDetailView(generic.DetailView):
     model = StoreInfo
     template_name = 'store_detail.html'
-    print("店名",StoreInfo.store_name)
-
 
     def get_context_data(self,**kwargs):
         store = self.get_object()
@@ -34,11 +35,20 @@ class StoreDetailView(generic.DetailView):
         #レビューの取得と追加
         context['reviews'] = Review.objects.filter(store_name=store).order_by('-create_at')
 
+        # 店舗ごとの平均scoreを算出
+        average_score = Review.objects.filter(store_name=store).aggregate(average_score=Avg('score'))['average_score'] or 0
+        context['average_score'] = average_score
+        
         #ユーザーがお気に入りにしている店舗情報を取得(#全ての'fav'フィールドの値をリストとして取得)
-        context['user_likes'] = Like.objects.filter(user=self.request.user).values_list('fav',flat=True) #favはLikeモデルのフィールド名
-        '''【解説】
-        fileter:userフィールドが現在のリクエストユーザーと一致するLikeオブジェクトを取得。
-        values_list:なんで数字のみを取得???'''
+
+        restaurant_id = self.kwargs['pk']
+        restaurant_name = StoreInfo.objects.filter(id=restaurant_id)[0].store_name
+
+        if self.request.user.is_authenticated: #ログインしていない状態で店舗詳細画面に遷移しようとするとエラーになるため場合わけ
+            context['user_likes'] = Like.objects.filter(user=self.request.user).values_list('fav',flat=True) #favはLikeモデルのフィールド名
+        
+        else:
+            context['user_likes'] = []
 
         return context
     
@@ -54,7 +64,7 @@ class StoreDetailView(generic.DetailView):
             self.request.session['form_time'] = form.data['time']
             self.request.session['form_persons'] = form.data['persons']
             self.request.session['form_restaurant'] = pk
-            return redirect('gourmet:confirm')
+            return redirect('gourmet:confirm')   #DBに値を保存せず、sessionに保存して変数としてテンプレートで使えるのでurlに数値を振る必要はない。
         
         #バリデーションに失敗した場合はフォームとともにテンプレートを再レンダリングする。
         return self.render_to_response(self.get_context_data(form=form))
@@ -67,7 +77,7 @@ class StoreDetailView(generic.DetailView):
     #     return context
 
 #予約確認画面  
-class ConfirmReservation(View): #Viewクラスを継承するときは"def post"や"def get"などの関数を使用する。
+class ConfirmReservation(LoginRequiredMixin,View): #Viewクラスを継承するときは"def post"や"def get"などの関数を使用する。
     model = Reservation
     template_name = 'confirm_reservation.html'
 
@@ -76,7 +86,6 @@ class ConfirmReservation(View): #Viewクラスを継承するときは"def post"
         date = ''
         time = ''
         persons =''
-        restaurant_name = ''
 
         if 'form_date' in self.request.session:
             date = self.request.session.get('form_date')
@@ -88,25 +97,22 @@ class ConfirmReservation(View): #Viewクラスを継承するときは"def post"
             persons = self.request.session.get('form_persons')
         if 'form_restaurant' in self.request.session:
             restaurant_id = self.request.session.get('form_restaurant')
-            restaurant = StoreInfo.objects.get(id=restaurant_id) #1店舗の情報をまるまるとっている。
-            restaurant_name = restaurant.store_name
+            restaurant = StoreInfo.objects.get(id=restaurant_id) 
 
         context.update({
             'user': self.request.user,
             'date': date,
             'time': time,
             'persons': persons,
-            'restaurant_name':restaurant_name,
+            'restaurant_name':restaurant,
         })
 
-        return render(request,self.template_name,context)
-    
+        return render(request,self.template_name,context) #def get関数が呼ばれた時に、self.template_name=confirm_reservation.htmlに情報を書き出すようにテンプレートを指定している。
     def post(self, request): #フォーム内のボタンが押された時に呼び出される。
         context = {}
         date = ''
         time = ''
         persons =''
-        restaurant_name = ''
 
         if 'form_date' in self.request.session:
             date = self.request.session.get('form_date')
@@ -115,9 +121,7 @@ class ConfirmReservation(View): #Viewクラスを継承するときは"def post"
         if 'form_persons' in self.request.session:
             persons = self.request.session.get('form_persons')
         if 'form_restaurant' in self.request.session:
-            restaurant_id = self.request.session.get('form_restaurant')
-            restaurant = StoreInfo.objects.get(id=restaurant_id)
-            restaurant_name = restaurant.store_name
+            restaurant_id = self.request.session.get('form_restaurant') #上でself.request.session['form_restaurant'] = pkと定義している。
 
         user_instance = self.request.user #外部キーのため
         restaurant_instance = StoreInfo.objects.get(id=restaurant_id) #外部キーのため
@@ -130,15 +134,13 @@ class ConfirmReservation(View): #Viewクラスを継承するときは"def post"
         # )
         # return redirect('gourmet:reservation_success',reservation_id=Reservation.objects.create.id)
 
-        new_reservation = Reservation.objects.create(
+        new_reservation = Reservation.objects.create( #この時点で自動的にidが割り振られる。createはDBに正式に登録する動作。
             user=user_instance,
             store_name=restaurant_instance,
             date=date,
             time=time,
             persons=persons
         )
-        print("確認",new_reservation)
-
         # 新しく作成された予約のIDを使用してリダイレクト
         return redirect('gourmet:reservation_success', reservation_id=new_reservation.id)
 
@@ -167,13 +169,7 @@ class ReserveDeleteView(LoginRequiredMixin,DeleteView):
     model = Reservation
     success_url = reverse_lazy('gourmet:reserve_list')
     template_name = 'reservation_delete.html'
-    
-    #【質問】メッセージが表示されない。
-    # def delete(self,request,*args,**kwargs):
-    #     messages.success(self.request,"予約をキャンセルしました。")
-    #     print("check",messages)
-    #     return super().delete(request,*args,**kwargs)
-    
+        
     def form_valid(self,form):
         messages.success(self.request,"予約をキャンセルしました。")
         return super().form_valid(form)
@@ -206,6 +202,8 @@ class ProfileUpdateView(LoginRequiredMixin,UpdateView):
         return super().form_invalid(form)
     
 #レビュー投稿機能
+
+@login_required
 def submit_review(request,store_id):
     store = get_object_or_404(StoreInfo, pk=store_id) #get_object_or_404(モデル, *フィルター条件)
     reviews = Review.objects.filter(store_name=store)
@@ -214,15 +212,50 @@ def submit_review(request,store_id):
         if form.is_valid():
             review = form.save(commit=False) #フォームを一時保存
             review.store_name = store #外部キーであるstore_nameの値を取得
+            review.user = request.user # 現在のログインユーザー(外部キー)sを設定
             review.save() #フォームを保存してモデルをDBに反映
             messages.success(request,'レビューのご協力ありがとうございました。')
-            return redirect('gourmet:detail',pk=store.id ) #???????
+            return redirect('gourmet:detail',pk=store.id ) 
     else:
         form = ReviewForm() #フォームの初期化
+        return render(request, 'review_form.html',{'form':form,'store': store})
+
+#レビューの編集フォーム
+class ReviewUpdateView(UpdateView):
+    model = Review
+    template_name = 'review-edit.html'
+    form_class =  ReviewForm
+
+    def get_success_url(self):
+        # Reviewインスタンスから関連するStoreInfoインスタンスを取得
+        review = self.object
+        store = review.store_name  # Reviewモデル内のStoreInfoへのForeignKey
+        return reverse_lazy('gourmet:detail',kwargs={'pk': store.pk})
     
-    print("reviwsの中身",reviews)
-    return render(request, 'review_form.html',{'form':form,'store': store})
+    def form_valid(self,form):
+        messages.success(self.request,'レビューを更新しました。')
+        return super().form_valid(form)
     
+    def form_invalid(self,form):
+        messages.error(self.request,'レビューの更新に失敗しました。')
+        return super().form_invalid(form)
+    
+#レビュー削除
+class ReviewDeleteView(LoginRequiredMixin,generic.DeleteView):
+    model = Review
+    template_name = 'review-delete.html'
+
+    def get_success_url(self):
+        # Reviewインスタンスから関連するStoreInfoインスタンスを取得
+        review = self.object
+        store = review.store_name  # Reviewモデル内のStoreInfoへのForeignKey
+        return reverse_lazy('gourmet:detail',kwargs={'pk': store.pk})
+    
+    def form_valid(self,form):
+        messages.success(self.request,"レビューを削除しました。")
+        return super().form_valid(form)
+
+
 # #お気に入り機能(同期処理)
 # def like_rest(request,store_id):
 #     store = get_object_or_404(StoreInfo, pk=store_id)
@@ -239,8 +272,8 @@ def submit_review(request,store_id):
 #     return redirect('gourmet:detail', pk=store_id)
 
 
-#新お気に入り機能(非同期処理try)
-
+#新お気に入り機能(非同期処理)
+@login_required
 def toggle_favorite(request, store_id):
     if request.method == "POST":
         store = get_object_or_404(StoreInfo, pk=store_id)
@@ -259,4 +292,30 @@ def toggle_favorite(request, store_id):
          # いいねのカウントを取得して返す
         count = Like.objects.filter(fav=store).count()
         return JsonResponse({'status': status, 'count': count}) #djangoのビューからJSONレスポンスを返す。JsonResponseはpythonの辞書型をJSON形式のHTTPレスポンスに変換している。
+
+#お気に入りリスト
+class LikeListView(LoginRequiredMixin,generic.ListView):
+    model = Like
+    template_name = 'like_list.html'
+
+    #ログインユーザーのお気に入りのみ表示
+    def get_queryset(self):
+        return Like.objects.filter(user=self.request.user)
+    
+#お気に入りリスト内の解除ボタン(非同期)
+def toggle_fav(request, store_id):
+    store = get_object_or_404(StoreInfo, id=store_id) #storeには店舗名が入る。
+    user = request.user
+
+    if Like.objects.filter(user=user,fav=store).exists():
+        Like.objects.filter(user=user,fav=store).delete()
+        status = 'removed'
+    else:
+        Like.objects.create(user=user,fav=store)
+        status = 'added'
+
+    return JsonResponse({'status':status})
+        
+
+
     

@@ -9,16 +9,12 @@
 
 
 【質問】
-・レビュー機能で星のマークがmodels.pyのscoreフィールドと同期したのはなぜ？
-・return redirect('gourmet:reservation_success', reservation_id=new_reservation.id)
-reservation_idはrestaurant_idとは異なる数字になっている。(45とか)これは何？なぜ、reservation_id=restaurant_idが有効ではない？
-・get_context_dataについて
-・お気に入り機能の店舗IDについて　store.idは取得できず、storeinfo.idなら取得できた。これはなぜ？
-・views.pyの    context['user_likes'] = Like.objects.filter(user=self.request.user).values_list('fav',flat=True) #favはLikeモデルのフィールド名   ではvalues_listによって数字(店舗ID)だけ取得した。これはなぜ？
-
+・管理画面でユーザー情報をメールアドレスで検索できるようにしたが、何で検索したらいいのか分かりづらいのでplaceholder="emailで検索"を表示させたい。
+・管理画面カテゴリ検索で、数字ではなくプルダウンでジャンルを検索できるようにしたい。さらに、StoreInfoモデルでもカテゴリで検索できるようにしたい。
+・レビューの編集後などに店舗詳細ページの特定のタブに遷移させたい。
 
 【次回課題】
-・お気に入り機能←ここから！！！！！！！！！
+・レビューの投稿は1ユーザーにつき、一度しか投稿できないようにする。
 ・予約完了メールの拡充
 ・必須のマーク
 ・管理者ページへのリンク
@@ -35,6 +31,15 @@ seira2
 sakaaaaaaaucgi@gmail.com   注意：aは6つ 
 seira7150
 
+②
+hanako
+user@example.com
+seira7150
+
+
 【完了(工夫してできるようになったこと)】
+・レスポンシブデザイン
 ・お気に入りハートマークの非同期処理
+・予約確認画面でのsessionの使用
+
 

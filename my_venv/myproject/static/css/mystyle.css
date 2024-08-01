@@ -825,3 +825,106 @@ a.btn--circle:hover {
   font-size: 20px;
   color: red;
 }
+
+/**お気に入り一覧ページ**/
+  /* 960px以上=PCで適応 */
+  @media screen and (min-width: 960px) {
+  .fav-list{
+    position: relative;
+    display: flex;
+
+
+    display: flex;
+    border: 1px solid #dedede;
+    padding: 10px;
+    margin: 20px;
+    align-items: flex-start;
+  
+  }
+  .fav-text{
+    position: absolute;
+    text-align: start;
+    left: 250px;
+    vertical-align: top;
+    height: 150px;
+    border-right: solid 1px#dedede;
+  }
+  .fabtn-container{
+    position: absolute;
+    right: 20px;
+    bottom: 10px;
+  }
+}
+
+.fav-list{
+  border: 1px solid #dedede;
+  border-radius: .375rem;
+  padding: 10px;
+  margin: 20px;
+}
+
+/*お気に入り解除ボタン*/
+.fav-list .btn-design{
+  display: flex;
+	text-align: center;
+	vertical-align: middle;
+	text-decoration: none;
+	width: 150px;
+	margin: auto;
+	padding: 0.5rem 1rem;
+	font-weight: bold;
+	border: 2px solid #dedede;
+	color: #888;
+	cursor: pointer;
+	position: relative;
+ 	overflow: hidden;
+ 	z-index: 1;
+}
+
+.fav-list .btn-design::before{
+  content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #dedede;
+	transform: translateX(-100%);
+	transition: all .3s;
+	z-index: -1;
+}
+
+.fav-list .btn-design:hover::before{
+  transform: translateX(0);
+}
+
+.fav-list .btn-design:hover{
+  color: #fff;
+}
+
+/*お気に入りに追加ボタン*/
+.fav-list .btn-add{
+  display: flex;
+	text-align: center;
+	vertical-align: middle;
+	text-decoration: none;
+	width: 150px;
+	margin: auto;
+	padding: 0.5rem 1rem;
+	font-weight: bold;
+	border: 2px solid #dedede;
+	color: #888;
+	cursor: pointer;
+	position: relative;
+ 	overflow: hidden;
+ 	z-index: 1;
+}
+
+.fav-list .btn-add span{
+  color: #ff7171;
+}
+
+.fav-list .btn-add:hover{
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* シャドウのスタイルを追加 */
+    background-color: #e0e0e0; /* ホバー時に背景色を変えるオプション */
+}

@@ -8,7 +8,7 @@ CustomUser = get_user_model()
 
 # カテゴリ分類(Productクラスより上で定義する必要がある。)
 class Category(models.Model):
-    # categoryはプルダウン式のため、選択肢を記載
+    # categoryはプルダウン式のため、選択肢を記載(管理画面からはカテゴリを新規登録できない仕様にしている。)
     category_choices = [
         ('1', '和食'),
         ('2', '中華'),
@@ -53,6 +53,7 @@ class Reservation(models.Model):
 #レビュー
 class Review(models.Model):
     score = models.PositiveIntegerField(blank=False, default=1)
+    user = models.ForeignKey(CustomUser, verbose_name='ユーザー',on_delete=models.PROTECT, null=True)
     store_name = models.ForeignKey(StoreInfo, verbose_name='店名',on_delete=models.PROTECT)
     handle = models.CharField(verbose_name='ニックネーム',max_length=50)
     title = models.CharField(verbose_name='タイトル',max_length=50)
@@ -61,7 +62,7 @@ class Review(models.Model):
     updated_at = models.DateTimeField(verbose_name='更新日時',auto_now=True)
 
     def __str__(self):
-        return self.title
+        return self.user.username
     
 #お気に入り機能
 class Like(models.Model):
@@ -76,3 +77,4 @@ class Like(models.Model):
         ]
     def __str__(self):
         return f"{self.user.username}が{self.fav.store_name}をいいねしました"
+        # return self.fav.store_name
