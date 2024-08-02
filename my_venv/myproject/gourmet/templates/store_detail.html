@@ -105,6 +105,8 @@
         <div class="row" style="margin-top:80px;">
           <div class="store-info col-md-8" style="padding: 10px; margin-bottom: 10px; border: 1px dotted #333333; border-radius: 5px;">
             <strong>{{ object.store_name }}</strong>
+            <br>
+            <p style="text-indent: 2rem; font-style: italic;">{{object.category}}</p>
             <div class="desc">
                 <u><p>店舗説明:</p></u>
                 <p>{{ object.store_detail }}</p>
@@ -114,12 +116,12 @@
         <!--カレンダーから予約するページ-->
         <section class="section col-md-4">
           <div class="section__block section__block--scoped">
-            <h3>予約する</h3>   
+            <h3 style="font-size: 15px; font-weight: bold; margin-bottom: 8px;">予約する</h3>   
   
             <form method="post">
               {% csrf_token %}
               {{ form.as_p }}
-              <button type="submit"  id="submit" class="btn btn-success btn-lg">予約する</button>
+              <button type="submit"  id="submit" class="btn btn-success btn-lg mt-4">予約する</button>
             </form>  
           </div>
         </div>
@@ -149,7 +151,7 @@
   <div class="tab-pane" id="two">
     <div class="a_detail">
       <div class="store-h1">
-          <h1>レビュー一覧 テスト:{{average_score}}</h1>
+          <h1>レビュー一覧</h1>
         </div>
       <hr class="hr1 mb-5">
       <a href="{% url 'gourmet:review_form' store_id=object.pk %}" class="btn btn-warning btn-lg">口コミを投稿する</a>
@@ -181,7 +183,7 @@
       <br>
       <hr style="color: #7d7c7c; margin-top: 5px;">
       投稿日時: {{ review.create_at }}
-      <h3  class="review-title" >{{ review.title }}</h3><br> <!--タイトル-->
+      <h3  class="review-title" style="font-size: 15px; font-weight: bold;" >{{ review.title }}</h3><br> <!--タイトル-->
       {{ review.content }}<br>  
     </div>
         

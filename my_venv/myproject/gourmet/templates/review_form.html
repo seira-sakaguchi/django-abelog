@@ -36,7 +36,7 @@
         {{ form.content }}
         <input type="hidden" name="store_id" value="{{ store.id }}">
         <div>
-            <a style="vertical-align: bottom; margin-right: 18px;" href="{% url 'gourmet:detail' store.id %}">戻る</a>
+            <a style="vertical-align: bottom; margin-right: 14px;color: rgb(47, 144, 177); text-decoration: underline !important;" href="{% url 'gourmet:detail' store.id %}">戻る</a>
             <button type="submit" class="btn btn-primary mt-4">送信する</button>
         </div>
     </form>

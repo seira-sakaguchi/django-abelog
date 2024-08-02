@@ -7,7 +7,7 @@ from .models import Reservation,Review
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ('full_name','furigana','email','postal_code','address','phone_number') #accounts/models.pyのフィールドのデータを参照
+        fields = ('full_name','furigana','handle','email','postal_code','address','phone_number') #accounts/models.pyのフィールドのデータを参照
 
     #全フォームフィールドに一括でBootstrapのform-controlクラスを追加できる。
     def __init__(self,*args,**kwargs):  
@@ -22,9 +22,9 @@ class ReservationForm(forms.ModelForm):
         model = Reservation
         fields = ['date', 'time', 'persons']
         widgets = {
-            'date': forms.TextInput(attrs={'class': 'form-control fieldset__input js__datepicker', 'placeholder': '予約の日付を選択してください。'}),
-            'time': forms.TextInput(attrs={'class': 'form-control fieldset__input js__timepicker', 'placeholder': '予約の時間を選択してください。'}),
-            'persons': forms.Select(attrs={'class': 'form-control'}, choices=[
+            'date': forms.TextInput(attrs={'class': 'form-control fieldset__input js__datepicker mb-3', 'placeholder': '予約の日付を選択してください。'}),
+            'time': forms.TextInput(attrs={'class': 'form-control fieldset__input js__timepicker mb-3', 'placeholder': '予約の時間を選択してください。'}),
+            'persons': forms.Select(attrs={'class': 'form-control mb-3'}, choices=[
                 ('', '予約人数を選択してください'),
                 (1, '1名'),
                 (2, '2名'),
@@ -42,9 +42,13 @@ class ReviewForm(forms.ModelForm):
     def __init__(self,*args,**kwargs):  
         super().__init__(*args,**kwargs)
         self.fields['handle'].widget.attrs['class']='form-control'
-        self.fields['handle'].widget.attrs['placeholder']='ニックネームを入力してください。'
+        self.fields['handle'].widget.attrs['style']='text-align:left'
+        self.fields['handle'].widget.attrs['placeholder']='ニックネームを入力してください。' #読み取り専用、入力不可に
+        self.fields['handle'].widget.attrs['readonly']='readonly' #読み取り専用、入力不可に
         self.fields['title'].widget.attrs['class']='form-control'
+        self.fields['title'].widget.attrs['style']='text-align:left'
         self.fields['title'].widget.attrs['placeholder']='タイトルを入力してください。'
         self.fields['content'].widget.attrs['class']='form-control'
+        self.fields['content'].widget.attrs['style']='text-align:left'
         self.fields['content'].widget.attrs['placeholder']='口コミの内容を入力してください。'
 

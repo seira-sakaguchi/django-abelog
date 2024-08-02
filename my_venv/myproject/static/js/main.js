@@ -55,6 +55,32 @@ const mySwiper2 = new Swiper('.card01 .swiper', {
   },
 });
 
+// カードタイプのカルーセル2
+const mySwiper3 = new Swiper('.card02 .swiper', {
+  slidesPerView: 1,
+  spaceBetween: 24,
+  grabCursor: true,
+  pagination: {
+    el: '.card02 .swiper-pagination',
+    clickable: true,
+  },
+  navigation: {
+    nextEl: '.card02 .swiper-button-next',
+    prevEl: '.card02 .swiper-button-prev',
+  },
+  breakpoints: {
+    600: {
+      slidesPerView: 2,
+    },
+    1025: {
+      slidesPerView: 4,
+      spaceBetween: 32,
+    }
+  },
+});
+
+
+
 //お気に入り機能(ハートマーク)の非同期処理(店舗詳細ページ)
 document.addEventListener('DOMContentLoaded', ()=> { 
   document.getElementById('fav-form').addEventListener('submit', (event)=> {

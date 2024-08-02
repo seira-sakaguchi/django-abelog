@@ -18,6 +18,17 @@ class Category(models.Model):
         ('6','焼肉'),
         ('7','韓国料理'),
     ]
+
+#     category_choices = [
+#     ('和食', '和食'),
+#     ('中華', '中華'),
+#     ('イタリアン', 'イタリアン'),
+#     ('フレンチ', 'フレンチ'),
+#     ('寿司','寿司'),
+#     ('焼肉','焼肉'),
+#     ('韓国料理','韓国料理'),
+# ]
+
     category = models.CharField(verbose_name='ジャンル', choices=category_choices, max_length=50)
     
     def __str__(self):
@@ -53,7 +64,7 @@ class Reservation(models.Model):
 #レビュー
 class Review(models.Model):
     score = models.PositiveIntegerField(blank=False, default=1)
-    user = models.ForeignKey(CustomUser, verbose_name='ユーザー',on_delete=models.PROTECT, null=True)
+    user = models.ForeignKey(CustomUser, verbose_name='ユーザー',on_delete=models.CASCADE, null=True)
     store_name = models.ForeignKey(StoreInfo, verbose_name='店名',on_delete=models.PROTECT)
     handle = models.CharField(verbose_name='ニックネーム',max_length=50)
     title = models.CharField(verbose_name='タイトル',max_length=50)

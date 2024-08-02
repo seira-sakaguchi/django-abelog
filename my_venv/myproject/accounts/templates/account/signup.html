@@ -8,22 +8,26 @@
 {% block active_signup %}active{% endblock %}
 
 {% block contents %}
-<div class="container-user">
-    <h1>サインアップ</h1>
-    <form method="post" action="{% url 'account_signup' %}">
-        {% csrf_token %}
-
-        <div class="mb-4 col-4">
-            {% bootstrap_form form %}
-            
+<div style="display: flex; justify-content: center;">
+    <div class="container">
+        <div class="row">
+          <div class="col-md-6 offset-md-3">       <!--offset-md-3...col-md-6の要素の左右に3カラム分-->  
+            <h1 style="font-size: 20px; font-weight: bold; margin:30px 0;">サインアップ</h1>
+            <form method="post" action="{% url 'account_signup' %}">
+                {% csrf_token %}
+                <div class="col-md-12 offset-md-0">
+                    {% bootstrap_form form %}
+                </div>
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name}}" value="{{redirect_field_value}}"/>
+                {% endif %}
+                <button class="btn btn-primary" type="submit">登録</button>
+            </form>
+            </div>
         </div>
-        <!-- redirect_field_valueにはリダイレクト先のURLが、格納される(ユーザーがサインアップページにアクセスする前に特定のページを閲覧していた場合、そのページのURLが格納される。)-->
-        <!-- redirect_field_nameにはredirect_field_valueに対応するフィールドの名前(通常はnext)-->
-        {% if redirect_field_value %}  <!--もしユーザーがサインアップ前に特定のページを閲覧していたら-->
-            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/> <!--valueにそのページのリンクを保存しておく。-->
-        {% endif %}
-
-        <button class="btn btn-primary" type="submit">登録</button>
-    </form>
+    </div>
 </div>
+
 {% endblock %}
+
+

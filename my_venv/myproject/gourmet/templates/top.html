@@ -35,18 +35,28 @@
     </div>
   </div>
 
-  <!-- メインビジュアルのスライダー(終了) -->
-  
-<!-- カードタイプのカルーセル(開始) -->
+<!-- メインビジュアルのスライダー(終了) -->
+
+<!--店舗 or　カテゴリー検索画面(開始)-->
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<div>
+  <form method="get" action="#" class="search_container">
+    <input type="text" size="25" placeholder="キーワード検索">
+    <input type="submit" value="&#xf002">
+  </form>
+</div>
+<!--店舗 or　カテゴリー検索画面(終了)-->
+
+<!-- カードタイプのカルーセル<おすすめのお店>(開始) -->
 
 <div class="card01">
-  <h1 class="reco-title">おすすめのお店</h1>
+  <h1 class="reco-title" style="font-size: 20px; font-weight: bold; margin:30px 0;">おすすめのお店</h1>
   <div class="l-inner">
 
     <div class="swiper-area">
       <div class="swiper">
         <div class="swiper-wrapper">
-          {% for storeinfo in storeinfo_list %}
+          {% for storeinfo,average_rate,review_count in storeinfo_list %}
           <a href="{% url 'gourmet:detail' storeinfo.pk %}" class="swiper-slide">
             <article class="slide">
               <div class="slide-media img-cover">
@@ -59,7 +69,20 @@
               <div class="slide-content">
                 <h2 class="slide-title">{{ storeinfo.store_name }}</h2>
                 <p class="p-category">ジャンル:{{ storeinfo.category}}</p>
-                <p>平均スコア(テスト):{{storeinfo.average_score}}</p>
+                <!-- <p>平均スコア(テスト):{{average_rate}}</p> -->
+                {% if average_rate >= 4.5 %}
+                <p>★★★★★({{ review_count }})</p>
+                {% elif average_rate >= 3.5 %}
+                <p>★★★★★({{ review_count }})</p>
+                {% elif average_rate >= 2.5 %}
+                <p>★★★({{ review_count }})</p>
+                {% elif average_rate >= 1.5 %}
+                <p>★★({{ review_count }})</p>
+                {% elif average_rate >= 0.5 %}
+                <p>★({{ review_count }})</p>
+                {% else %}
+                <p>*評価がまだありません</p>
+                {% endif %}
               </div>
             </article>
           </a>
@@ -76,7 +99,62 @@
 
   </div>
 </div>
-<!-- カードタイプのカルーセル(終了) -->
+<!-- カードタイプのカルーセル<おすすめのお店>(終了) -->
+
+
+<!-- カードタイプのカルーセル<全てのお店一覧>(開始) -->
+<div class="card02 mt-5">
+  <h1 class="reco-title" style="font-size: 20px; font-weight: bold; margin:30px 0;">全てのお店一覧</h1>
+  <div class="l-inner">
+
+    <div class="swiper-area">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+          {% for object,average_rate,review_count in object_list %}
+          <a href="{% url 'gourmet:detail' object.pk %}" class="swiper-slide">
+            <article class="slide">
+              <div class="slide-media img-cover">
+                {% if object.photo1 %} <!--写真がアップロードされている時とされていない時で場合分けする必要がある。-->
+                    <img src="{{ object.photo1.url }}" alt="">
+                {% else %}
+                    <img src="{% static 'media/noImage.png' %}" alt="No Image">
+                {% endif %}
+              </div>
+              <div class="slide-content">
+                <h2 class="slide-title">{{ object.store_name }}</h2>
+                <p class="p-category">ジャンル:{{ object.category}}</p>
+                <!-- <p>平均スコア(テスト):{{average_rate}}</p> -->
+                {% if average_rate >= 4.5 %}
+                <p>★★★★★({{ review_count }})</p>
+                {% elif average_rate >= 3.5 %}
+                <p>★★★★★({{ review_count }})</p>
+                {% elif average_rate >= 2.5 %}
+                <p>★★★({{ review_count }})</p>
+                {% elif average_rate >= 1.5 %}
+                <p>★★({{ review_count }})</p>
+                {% elif average_rate >= 0.5 %}
+                <p>★({{ review_count }})</p>
+                {% else %}
+                <p>*評価がまだありません</p>
+                {% endif %}
+              </div>
+            </article>
+          </a>
+          {% empty %}
+          <p>店舗の登録がありません。</p>
+          {% endfor %}
+          
+        </div><!-- /swiper-wrapper -->
+      </div><!-- /swiper -->
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div><!-- /swiper-area -->
+    <div class="swiper-pagination"></div>
+
+  </div>
+</div>
+<!-- カードタイプのカルーセル<全てのお店一覧>(終了) -->
+
 
 
 

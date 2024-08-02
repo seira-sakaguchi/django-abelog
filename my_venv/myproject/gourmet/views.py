@@ -18,6 +18,46 @@ from django.db.models import Sum,Avg
 class TopView(generic.ListView):
     model = StoreInfo
     template_name = 'top.html'
+
+    def get_context_data(self,**kwargs):
+        context = super(TopView, self).get_context_data(**kwargs)
+
+        object_list = context['object_list'] #全てのお店リスト
+        high_score_list= [] #評価が「3以上」(*現時点)のお店リスト
+        high_average_rate_list = [] #評価が「3以上」(*現時点)のお店の平均点リスト
+        average_rate_list = [] #全ての店舗の評価の平均点のリスト
+        review_count_list = [] #各店舗のレビュー件数リスト
+
+        for object in object_list:
+            average_score = Review.objects.filter(store_name=object).aggregate(average_score=Avg('score'))['average_score'] or 0
+            average_score = round(average_score,1) #少数第二位で四捨五入
+
+            review_count = Review.objects.filter(store_name=object).count() # 各店舗のレビュー件数をカウント
+            review_count_list.append(review_count)
+
+            # print("チェック！！！！",average_score)
+            average_rate_list.append(average_score)
+            if average_score >= 3: #評価3以上のお店のみ、high_average_rate_listリストとhigh_score_listに追加
+                high_average_rate_list.append(average_score)
+                high_score_list.append(object)
+                
+        context.update(
+            {
+                'storeinfo_list':zip(high_score_list,high_average_rate_list,review_count_list), #storeinfo_listは高評価のお店の店舗情報リストと平均評価のリストを合わせたもの++各店舗のレビュー件数
+                'object_list':zip(object_list,average_rate_list,review_count_list) #object_listは全てのお店の店舗情報リストと全てのお店の平均評価リストを合わせたもの+各店舗のレビュー件数
+            }
+        )
+
+        #zip関数の使い方
+        # for v1,v2 in zip([1,2],[3,4]):
+        #     print("v1",v1)
+        #     print("v2",v2)
+        #出力結果は 1
+        #         3
+        #         2
+        #         4
+        return context
+
     
 
 #店舗詳細ページ
@@ -56,6 +96,11 @@ class StoreDetailView(generic.DetailView):
     def post(self, request, *args, **kwargs):
         pk = self.kwargs['pk']
         form = ReservationForm(request.POST)
+
+        #もし、ユーザー情報が登録されていなければ先にプロフィールを更新するように遷移させる。
+        if not request.user.full_name and not request.user.address:
+            messages.error(request, '予約をするには、まずユーザー情報を登録してください。')
+            return redirect('gourmet:profile')  # 名前登録ページにリダイレクト
 
         if form.is_valid():
             # print('check',form)
@@ -159,6 +204,7 @@ class ReserveListView(LoginRequiredMixin,generic.ListView):
     model = Reservation
     template_name = 'reserve_list.html'
     context_object_name = 'reservations' #テンプレート内で使う変数名を指定
+    paginate_by = 5
 
     #ログインユーザーの予約一覧のみ表示
     def get_queryset(self):
@@ -207,6 +253,17 @@ class ProfileUpdateView(LoginRequiredMixin,UpdateView):
 def submit_review(request,store_id):
     store = get_object_or_404(StoreInfo, pk=store_id) #get_object_or_404(モデル, *フィルター条件)
     reviews = Review.objects.filter(store_name=store)
+
+    if not request.user.handle:
+        messages.error(request, 'レビューを投稿するには、ニックネームを登録してください。')
+        return redirect('gourmet:profile')
+
+
+    # フォームに渡す初期値として現在のユーザーのニックネームを設定
+    initial_data = {
+        'handle': request.user.handle
+    }
+
     if request.method == 'POST':
         form = ReviewForm(request.POST)
         if form.is_valid():
@@ -217,9 +274,9 @@ def submit_review(request,store_id):
             messages.success(request,'レビューのご協力ありがとうございました。')
             return redirect('gourmet:detail',pk=store.id ) 
     else:
-        form = ReviewForm() #フォームの初期化
-        return render(request, 'review_form.html',{'form':form,'store': store})
-
+        form = ReviewForm(initial=initial_data) #フォームの初期化
+    return render(request, 'review_form.html',{'form':form,'store': store})
+    
 #レビューの編集フォーム
 class ReviewUpdateView(UpdateView):
     model = Review
@@ -297,6 +354,7 @@ def toggle_favorite(request, store_id):
 class LikeListView(LoginRequiredMixin,generic.ListView):
     model = Like
     template_name = 'like_list.html'
+    paginate_by = 5
 
     #ログインユーザーのお気に入りのみ表示
     def get_queryset(self):
