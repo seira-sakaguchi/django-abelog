@@ -17,4 +17,5 @@ urlpatterns = [
     path('like/<int:store_id>',views.toggle_favorite,name='toggle_favorite'), #like_rest(同期処理)からtoggle_favoriteb (非同期処理)に変更
     path('like-list/',views.LikeListView.as_view(),name='like_list'),
     path('toggle-fav/<int:store_id>/', views.toggle_fav,name ='toggle-fav'),
+    path('search/',views.SearchResultView.as_view(),name='search'),
 ]

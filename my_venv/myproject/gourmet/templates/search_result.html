@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}検索結果{% endblock %}
+
+{% block contents %}
+<div class="a_detail">
+    <div class="store-h1">
+        <h1>検索結果</h1>
+    </div>
+    <hr class="hr1 mb-5">
+
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <p class="text-start">「{{ query }}」の検索結果:<br><strong>{{all_count}}</strong>件が見つかりました。</p>
+            <p class="text-start mt-3" style="text-indent: 3rem;">{{ page_obj.start_index }} ~ {{ page_obj.end_index }} 件を表示/全{{ page_obj.paginator.count }}件</p>
+
+            <!--カード開始-->
+            {% for storeinfo,average_rate,review_count in object_list %}
+                <a href="{% url 'gourmet:detail' storeinfo.pk %}">
+                    <div class="mt-5" style="display: flex; justify-content: center;">
+                        <div class="card mb-3 d-flex" style="width: 900px; justify-content: center;">
+                            <div class="cardtype row g-0">
+                            <!--画像(開始)-->
+                            <div class="card-photo col-md-4">
+                                <img src="{{ storeinfo.photo1.url }}" class="img-fluid rounded-start" >
+                            <!--画像(終了)-->
+                            </div>
+                            <!--店舗説明(開始)-->
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h1 class="card-title">{{storeinfo.store_name}}</h1>
+                                    <p style="text-indent: 3rem; font-style: italic;">{{storeinfo.category}}</p>
+                                    <p class="card-text col-md-12 mt-3">{{storeinfo.store_detail|truncatechars:150}}</p>
+                                    <!--評価-->
+                                    <div class="score-rating card-text text-start" style="margin-left: 10px;">
+                                        {% if average_rate >= 4.5 %}
+                                        <p><span id="orange">★★★★★</span>({{ review_count }})</p>
+                                        {% elif average_rate >= 3.5 %}
+                                        <p><span id="orange">★★★★★</span><span id="gray">★</span><strong>({{ review_count }})</strong></p>
+                                        {% elif average_rate >= 2.5 %}
+                                        <p><span id="orange">★★★</span><span id="gray">★★</span><strong>({{ review_count }})</strong></p>
+                                        {% elif average_rate >= 1.5 %}
+                                        <p><span id="orange">★★</span><span id="gray">★★★</span><strong>({{ review_count }})</strong></p>
+                                        {% elif average_rate >= 0.5 %}
+                                        <p><span id="orange">★</span><span id="gray">★★★★</span><strong>({{ review_count }})</strong></p>
+                                        {% else %}
+                                        <p style="font-size: 12px;">*評価がまだありません</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <!--店舗説明(終了)-->
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+            <!--カード(終了)-->
+        </div>
+    </div>
+
+
+    <!--ページネーション(開始)-->
+    <ul class="Pagination">
+        {% if page_obj.has_previous %}
+        <li class="Pagination-Item">
+            <a class="Pagination-Item-Link" href="?query={{ request.GET.query }}&page={{ page_obj.previous_page_number }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="Pagination-Item-Link-Icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+        <li class="Pagination-Item">
+            <a class="Pagination-Item-Link {% if page_obj.number == num %}isActive{% endif %}" href="?query={{ request.GET.query }}&page={{ num }}"><span>{{ num }}</span></a>
+        </li>
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="Pagination-Item">
+            <a class="Pagination-Item-Link" href="?query={{ request.GET.query }}&page={{ page_obj.next_page_number }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="Pagination-Item-Link-Icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+    </ul>            
+    <!--ページネーション(終了)-->
+</div>
+
+
+{% endblock %}

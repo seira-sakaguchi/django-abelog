@@ -28,7 +28,13 @@ class TopView(generic.ListView):
         average_rate_list = [] #全ての店舗の評価の平均点のリスト
         review_count_list = [] #各店舗のレビュー件数リスト
 
-        for object in object_list:
+        #カテゴリーリスト(辞書)
+        category_dict= {} #key:カテゴリ value:店舗名
+        #カテゴリーのみリスト(重複なし)
+        category_list = []
+
+        for object in object_list:              
+
             average_score = Review.objects.filter(store_name=object).aggregate(average_score=Avg('score'))['average_score'] or 0
             average_score = round(average_score,1) #少数第二位で四捨五入
 
@@ -40,13 +46,20 @@ class TopView(generic.ListView):
             if average_score >= 3: #評価3以上のお店のみ、high_average_rate_listリストとhigh_score_listに追加
                 high_average_rate_list.append(average_score)
                 high_score_list.append(object)
+
+            #店舗名とカテゴリーの辞書型と全店舗のカテゴリーを重複がないようにリストに格納する。
+            category_dict[object] = object.category
+            if not object.category in category_list:
+                category_list.append(object.category)
                 
         context.update(
             {
-                'storeinfo_list':zip(high_score_list,high_average_rate_list,review_count_list), #storeinfo_listは高評価のお店の店舗情報リストと平均評価のリストを合わせたもの++各店舗のレビュー件数
-                'object_list':zip(object_list,average_rate_list,review_count_list) #object_listは全てのお店の店舗情報リストと全てのお店の平均評価リストを合わせたもの+各店舗のレビュー件数
+                'high_storeinfo_list':zip(high_score_list,high_average_rate_list,review_count_list), #storeinfo_listは高評価のお店の店舗情報リストと平均評価のリストを合わせたもの++各店舗のレビュー件数
+                'object_list':zip(object_list,average_rate_list,review_count_list), #object_listは全てのお店の店舗情報リストと全てのお店の平均評価リストを合わせたもの+各店舗のレビュー件数
+                'category_list':category_list
             }
         )
+        return context
 
         #zip関数の使い方
         # for v1,v2 in zip([1,2],[3,4]):
@@ -56,9 +69,71 @@ class TopView(generic.ListView):
         #         3
         #         2
         #         4
+
+#検索絞り込み
+class SearchResultView(generic.ListView):
+    model = StoreInfo
+    template_name = 'search_result.html'
+    paginate_by = 4
+
+    #検索機能
+    def get_queryset(self):
+        query = self.request.GET.get('query') #検索画面で入力されたキーワードをquery変数に代入。'query'という文字列はURLパラメーターを指す。
+        if query:
+            storeinfo_list = StoreInfo.objects.filter(store_name__icontains=query) # 店舗名と検索キーワードを部分一致で絞り込み
+        else:
+            storeinfo_list = StoreInfo.objects.all()
+        
+        return storeinfo_list
+    
+    #絞り込み以外、出力したいものはトップページと変わらないので全部一緒。
+    def get_context_data(self,**kwargs):
+        context = super(SearchResultView, self).get_context_data(**kwargs)
+
+        query = self.request.GET.get('query') #検索画面で入力されたキーワードをquery変数に代入。'query'という文字列はURLパラメーターを指す。
+
+        storeinfo_list = context['object_list'] #get_queryメソッドから返されたクエリセット(データリスト)を取得・
+
+        #ページネーションをつけると、storeinfo_list.countではページネート指定の最大数の数字しか取れない。よって、 get_context_dataメソッド内で新たなリストを作成。
+        if query:
+            all_list = StoreInfo.objects.filter(store_name__icontains=query) # 店舗名と検索キーワードを部分一致で絞り込み
+        else:
+            all_list = StoreInfo.objects.all()
+        all_count = all_list.count()
+
+        object_list = context['object_list'] #全てのお店リスト
+
+        average_rate_list = [] #全ての店舗の評価の平均点のリスト
+        review_count_list = [] #各店舗のレビュー件数リスト
+
+        #カテゴリーリスト(辞書)
+        category_dict= {} #key:カテゴリ value:店舗名
+        #カテゴリーのみリスト(重複なし)
+        category_list = []
+
+        for object in object_list:              
+
+            average_score = Review.objects.filter(store_name=object).aggregate(average_score=Avg('score'))['average_score'] or 0
+            average_score = round(average_score,1) #少数第二位で四捨五入
+
+            review_count = Review.objects.filter(store_name=object).count() # 各店舗のレビュー件数をカウント
+            review_count_list.append(review_count)
+
+            average_rate_list.append(average_score)
+
+        context.update(
+            {
+                'object_list':zip(object_list,average_rate_list,review_count_list), #object_listは全てのお店の店舗情報リストと全てのお店の平均評価リストを合わせたもの+各店舗のレビュー件数
+                'category_list':category_list,
+                'all_count':all_count,
+                'query':query
+            }
+        )
         return context
 
-    
+
+
+
 
 #店舗詳細ページ
 class StoreDetailView(generic.DetailView):
