@@ -38,7 +38,7 @@
 <!-- メインビジュアルのスライダー(終了) -->
 
 <!--店舗 or　カテゴリー検索画面(開始)-->
-<div class="search col-md-6 offset-md-1">
+<div class="search col-md-6 offset-md-1" style="margin-bottom: 50px;">
   <div style="margin: 30px;" >
   <form style="justify-content: left;" method="get" class="search_container" action="{% url 'gourmet:search' %}">
     <input id="search-query" name="query" value="{{ request.GET.query }}" type="text" size="25" placeholder="キーワード検索"> 
@@ -47,10 +47,11 @@
     <input type="submit" value="&#xf002" style="text-align: center;">
   </form>
   </div>
-
+  <div style="margin-left:10px;">
   {% for category in category_list %}
     <button class="btn btn-secondary mb-2" name="category" onclick="setSearchQuery('{{ category }}')">{{category}}</button>
   {% endfor %}
+  </div>
 
 
 </div>

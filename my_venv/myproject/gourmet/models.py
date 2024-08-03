@@ -9,27 +9,18 @@ CustomUser = get_user_model()
 # カテゴリ分類(Productクラスより上で定義する必要がある。)
 class Category(models.Model):
     # categoryはプルダウン式のため、選択肢を記載(管理画面からはカテゴリを新規登録できない仕様にしている。)
-    category_choices = [
-        ('1', '和食'),
-        ('2', '中華'),
-        ('3', 'イタリアン'),
-        ('4', 'フレンチ'),
-        ('5','寿司'),
-        ('6','焼肉'),
-        ('7','韓国料理'),
-        ('8','タイ料理'),
-        ('9','スパイスカレー')
-    ]
 
-#     category_choices = [
-#     ('和食', '和食'),
-#     ('中華', '中華'),
-#     ('イタリアン', 'イタリアン'),
-#     ('フレンチ', 'フレンチ'),
-#     ('寿司','寿司'),
-#     ('焼肉','焼肉'),
-#     ('韓国料理','韓国料理'),
-# ]
+    category_choices = [
+    ('和食', '和食'),
+    ('中華', '中華'),
+    ('イタリアン', 'イタリアン'),
+    ('フレンチ', 'フレンチ'),
+    ('寿司','寿司'),
+    ('焼肉','焼肉'),
+    ('韓国料理','韓国料理'),
+    ('タイ料理','タイ料理'),
+    ('スペイン料理','スペイン料理')
+]
 
     category = models.CharField(verbose_name='ジャンル', choices=category_choices, max_length=50)
     
@@ -41,7 +32,7 @@ class StoreInfo(models.Model):
     user = models.ForeignKey(CustomUser, verbose_name='ユーザー',on_delete=models.PROTECT)
     store_name = models.CharField(verbose_name='店舗名',max_length=40)
     #カテゴリーはForeignKey
-    category = models.ForeignKey(Category,verbose_name='ジャンル', null=True, blank=True, on_delete=models.SET_NULL)
+    category = models.ForeignKey(Category,verbose_name='ジャンル', on_delete=models.PROTECT)
     store_detail = models.TextField(verbose_name='店舗詳細',blank=True, null=True)
     photo1 = models.ImageField(verbose_name='写真1',blank=True,default='noImage.png')
     photo2 = models.ImageField(verbose_name='写真2',blank=True,default='noImage.png')

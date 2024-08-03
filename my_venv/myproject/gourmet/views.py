@@ -74,104 +74,65 @@ class SearchResultView(generic.ListView):
 
     #検索機能
     def get_queryset(self):
-            query = self.request.GET.get('query')  # 検索画面で入力されたキーワードをquery変数に代入
-            
-            # カテゴリー名と番号のマッピング
-            category_mapping = dict(Category.category_choices)
-            
+        query = self.request.GET.get('query')  # 検索画面で入力されたキーワードをquery変数に代入
+        category_filtered = StoreInfo.objects.none()  # 初期化: 空のクエリセット
 
-            # 初期値
-            category_number = None
-            category_filtered = StoreInfo.objects.none()  # 初期化: 空のクエリセット
-
-
-            if query:
-                # カテゴリー名から番号を取得
-                for key, value in category_mapping.items():
-                    if query in value:
-                        category_number = key
-                        break
-
-                # カテゴリーでのフィルタリング
-                if category_number:
-                    category_number = str(category_number)
-                    print("フィルタリング条件:", category_number)
-                    category_filtered = StoreInfo.objects.filter(category=category_number)
-                    print("フィルタリング結果:", category_filtered)
-
-                # 店舗名でのフィルタリング
-                storeinfo_list = StoreInfo.objects.filter(store_name__icontains=query)
-                
-                # フィルタリング条件の統合
-                return storeinfo_list | category_filtered
-            else:
-                return StoreInfo.objects.all()
-
-
-    def get_context_data(self,**kwargs):
-        context = super(SearchResultView, self).get_context_data(**kwargs)
-
-        query = self.request.GET.get('query') #検索画面で入力されたキーワードをquery変数に代入。'query'という文字列はURLパラメーターを指す。
-        
-        storeinfo_list = context['object_list'] 
-        category_mapping = dict(Category.category_choices)
-
-        # 初期値
-        category_number = None
-
-
-        #ページネーションをつけると、storeinfo_list.countではページネート指定の最大数の数字しか取れない。よって、 get_context_dataメソッド内で新たなリストを作成。
         if query:
-            # 検索クエリに基づくフィルタリング
-            all_list = StoreInfo.objects.all()
-            for key, value in category_mapping.items():
-                if query in value:
-                    category_number = key
-                    break
-            if category_number:
-                all_list = all_list.filter(category=category_number)
-                print("ハハッはははh",all_list)
-            elif query:
-                all_list = all_list.filter(store_name__icontains=query)
+            # カテゴリ名からCategoryオブジェクトを取得
+            category_obj = Category.objects.filter(category=query).first() #店舗名検索の場合、空の結果となる。filter()はその場合でもエラー発生しない。
+            
+            if category_obj:
+                # カテゴリーでのフィルタリング
+                category_filtered = StoreInfo.objects.filter(category=category_obj)
+
+            # 店舗名でのフィルタリング
+            storeinfo_list = StoreInfo.objects.filter(store_name__icontains=query)
+            
+            # フィルタリング条件の統合
+            return storeinfo_list | category_filtered #get_querysetメソッドで返されたクエリセットはデフォルトで object_list という名前のコンテキスト変数としてテンプレートに渡される。
+        
+        else:
+            return StoreInfo.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(SearchResultView, self).get_context_data(**kwargs)
+        query = self.request.GET.get('query')  # 検索画面で入力されたキーワードをquery変数に代入
+
+        if query:
+            # キーワードに基づいてフィルタリングされた全ての店舗リストを取得
+            category_obj = Category.objects.filter(category=query).first()
+            if category_obj:
+                all_list = StoreInfo.objects.filter(store_name__icontains=query) | StoreInfo.objects.filter(category=category_obj)
+            else:
+                all_list = StoreInfo.objects.filter(store_name__icontains=query)
         else:
             all_list = StoreInfo.objects.all()
 
-
         all_count = all_list.count()
 
-        object_list = context['object_list'] #全てのお店リスト
+        object_list = context['object_list']  # 全てのお店リスト
+        average_rate_list = []  # 全ての店舗の評価の平均点のリスト
+        review_count_list = []  # 各店舗のレビュー件数リスト
 
-        average_rate_list = [] #全ての店舗の評価の平均点のリスト
-        review_count_list = [] #各店舗のレビュー件数リスト
-
-        #カテゴリーリスト(辞書)
-        category_dict= {} #key:カテゴリ value:店舗名
-        #カテゴリーのみリスト(重複なし)
-        category_list = []
-
-        for object in object_list:              
-
+        for object in object_list:
             average_score = Review.objects.filter(store_name=object).aggregate(average_score=Avg('score'))['average_score'] or 0
-            average_score = round(average_score,1) #少数第二位で四捨五入
-
-            review_count = Review.objects.filter(store_name=object).count() # 各店舗のレビュー件数をカウント
-            review_count_list.append(review_count)
+            average_score = round(average_score, 1)  # 少数第二位で四捨五入
+            review_count = Review.objects.filter(store_name=object).count()  # 各店舗のレビュー件数をカウント
 
             average_rate_list.append(average_score)
+            review_count_list.append(review_count)
 
-        category_list = StoreInfo.objects.values_list('category', flat=True).distinct()
+        category_list = StoreInfo.objects.values_list('category__category', flat=True).distinct()
 
         context.update(
             {
-                'object_list':zip(object_list,average_rate_list,review_count_list), #object_listは全てのお店の店舗情報リストと全てのお店の平均評価リストを合わせたもの+各店舗のレビュー件数
-                'category_list':category_list,
-                'all_count':all_count,
-                'query':query
+                'object_list': zip(object_list, average_rate_list, review_count_list),  # 全てのお店の店舗情報リストと全てのお店の平均評価リストを合わせたもの
+                'category_list': category_list,
+                'all_count': all_count,
+                'query': query
             }
         )
         return context
-
-
 
 
 
