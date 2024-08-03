@@ -17,6 +17,8 @@ class Category(models.Model):
         ('5','寿司'),
         ('6','焼肉'),
         ('7','韓国料理'),
+        ('8','タイ料理'),
+        ('9','スパイスカレー')
     ]
 
 #     category_choices = [
@@ -39,7 +41,7 @@ class StoreInfo(models.Model):
     user = models.ForeignKey(CustomUser, verbose_name='ユーザー',on_delete=models.PROTECT)
     store_name = models.CharField(verbose_name='店舗名',max_length=40)
     #カテゴリーはForeignKey
-    category = models.ForeignKey(Category,verbose_name='ジャンル', on_delete=models.PROTECT)
+    category = models.ForeignKey(Category,verbose_name='ジャンル', null=True, blank=True, on_delete=models.SET_NULL)
     store_detail = models.TextField(verbose_name='店舗詳細',blank=True, null=True)
     photo1 = models.ImageField(verbose_name='写真1',blank=True,default='noImage.png')
     photo2 = models.ImageField(verbose_name='写真2',blank=True,default='noImage.png')

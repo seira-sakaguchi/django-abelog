@@ -146,3 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+//トップページ検索画面で、カテゴリボタンが押されたら、検索ボックスに自動で入力されるように
+function setSearchQuery(value) {
+  document.getElementById('search-query').value = value;
+}

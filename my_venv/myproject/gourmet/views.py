@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views import generic,View
 from django.views.generic import UpdateView, ListView,DeleteView,DetailView
-from .models import StoreInfo,Reservation,Review,Like
+from .models import StoreInfo,Reservation,Review,Like,Category
 from accounts.models import CustomUser
 from .forms import ProfileForm,ReservationForm,ReviewForm
 from django.urls import reverse_lazy
@@ -28,8 +28,6 @@ class TopView(generic.ListView):
         average_rate_list = [] #全ての店舗の評価の平均点のリスト
         review_count_list = [] #各店舗のレビュー件数リスト
 
-        #カテゴリーリスト(辞書)
-        category_dict= {} #key:カテゴリ value:店舗名
         #カテゴリーのみリスト(重複なし)
         category_list = []
 
@@ -41,14 +39,12 @@ class TopView(generic.ListView):
             review_count = Review.objects.filter(store_name=object).count() # 各店舗のレビュー件数をカウント
             review_count_list.append(review_count)
 
-            # print("チェック！！！！",average_score)
             average_rate_list.append(average_score)
             if average_score >= 3: #評価3以上のお店のみ、high_average_rate_listリストとhigh_score_listに追加
                 high_average_rate_list.append(average_score)
                 high_score_list.append(object)
 
             #店舗名とカテゴリーの辞書型と全店舗のカテゴリーを重複がないようにリストに格納する。
-            category_dict[object] = object.category
             if not object.category in category_list:
                 category_list.append(object.category)
                 
@@ -56,7 +52,7 @@ class TopView(generic.ListView):
             {
                 'high_storeinfo_list':zip(high_score_list,high_average_rate_list,review_count_list), #storeinfo_listは高評価のお店の店舗情報リストと平均評価のリストを合わせたもの++各店舗のレビュー件数
                 'object_list':zip(object_list,average_rate_list,review_count_list), #object_listは全てのお店の店舗情報リストと全てのお店の平均評価リストを合わせたもの+各店舗のレビュー件数
-                'category_list':category_list
+                'category_list':category_list,
             }
         )
         return context
@@ -78,27 +74,69 @@ class SearchResultView(generic.ListView):
 
     #検索機能
     def get_queryset(self):
-        query = self.request.GET.get('query') #検索画面で入力されたキーワードをquery変数に代入。'query'という文字列はURLパラメーターを指す。
-        if query:
-            storeinfo_list = StoreInfo.objects.filter(store_name__icontains=query) # 店舗名と検索キーワードを部分一致で絞り込み
-        else:
-            storeinfo_list = StoreInfo.objects.all()
-        
-        return storeinfo_list
-    
-    #絞り込み以外、出力したいものはトップページと変わらないので全部一緒。
+            query = self.request.GET.get('query')  # 検索画面で入力されたキーワードをquery変数に代入
+            
+            # カテゴリー名と番号のマッピング
+            category_mapping = dict(Category.category_choices)
+            
+
+            # 初期値
+            category_number = None
+            category_filtered = StoreInfo.objects.none()  # 初期化: 空のクエリセット
+
+
+            if query:
+                # カテゴリー名から番号を取得
+                for key, value in category_mapping.items():
+                    if query in value:
+                        category_number = key
+                        break
+
+                # カテゴリーでのフィルタリング
+                if category_number:
+                    category_number = str(category_number)
+                    print("フィルタリング条件:", category_number)
+                    category_filtered = StoreInfo.objects.filter(category=category_number)
+                    print("フィルタリング結果:", category_filtered)
+
+                # 店舗名でのフィルタリング
+                storeinfo_list = StoreInfo.objects.filter(store_name__icontains=query)
+                
+                # フィルタリング条件の統合
+                return storeinfo_list | category_filtered
+            else:
+                return StoreInfo.objects.all()
+
+
     def get_context_data(self,**kwargs):
         context = super(SearchResultView, self).get_context_data(**kwargs)
 
         query = self.request.GET.get('query') #検索画面で入力されたキーワードをquery変数に代入。'query'という文字列はURLパラメーターを指す。
+        
+        storeinfo_list = context['object_list'] 
+        category_mapping = dict(Category.category_choices)
 
-        storeinfo_list = context['object_list'] #get_queryメソッドから返されたクエリセット(データリスト)を取得・
+        # 初期値
+        category_number = None
+
 
         #ページネーションをつけると、storeinfo_list.countではページネート指定の最大数の数字しか取れない。よって、 get_context_dataメソッド内で新たなリストを作成。
         if query:
-            all_list = StoreInfo.objects.filter(store_name__icontains=query) # 店舗名と検索キーワードを部分一致で絞り込み
+            # 検索クエリに基づくフィルタリング
+            all_list = StoreInfo.objects.all()
+            for key, value in category_mapping.items():
+                if query in value:
+                    category_number = key
+                    break
+            if category_number:
+                all_list = all_list.filter(category=category_number)
+                print("ハハッはははh",all_list)
+            elif query:
+                all_list = all_list.filter(store_name__icontains=query)
         else:
             all_list = StoreInfo.objects.all()
+
+
         all_count = all_list.count()
 
         object_list = context['object_list'] #全てのお店リスト
@@ -120,6 +158,8 @@ class SearchResultView(generic.ListView):
             review_count_list.append(review_count)
 
             average_rate_list.append(average_score)
+
+        category_list = StoreInfo.objects.values_list('category', flat=True).distinct()
 
         context.update(
             {

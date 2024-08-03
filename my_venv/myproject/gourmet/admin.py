@@ -19,6 +19,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     search_help_text = 'emailで検索'
 
 class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('category','id')
     search_fields = ('category',)
 
 

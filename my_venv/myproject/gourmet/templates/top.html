@@ -41,7 +41,7 @@
 <div class="search col-md-6 offset-md-1">
   <div style="margin: 30px;" >
   <form style="justify-content: left;" method="get" class="search_container" action="{% url 'gourmet:search' %}">
-    <input name="query" value="{{ request.GET.query }}" type="text" size="25" placeholder="キーワード検索"> 
+    <input id="search-query" name="query" value="{{ request.GET.query }}" type="text" size="25" placeholder="キーワード検索"> 
     <!--name="query"としているため、ユーザーが入力した値がqueryという名前のURLパラメーターとして送信される。-->
     <!--value="{{ request.GET.query }}"は、URLパラメーターからqueryの値を取得し、入力フィールドの初期値として設定。=>ページリロード後にも入力フィールドに残る。-->
     <input type="submit" value="&#xf002" style="text-align: center;">
@@ -49,7 +49,7 @@
   </div>
 
   {% for category in category_list %}
-    <button class="btn btn-secondary mb-2">{{category}}</button>
+    <button class="btn btn-secondary mb-2" name="category" onclick="setSearchQuery('{{ category }}')">{{category}}</button>
   {% endfor %}
 
 
