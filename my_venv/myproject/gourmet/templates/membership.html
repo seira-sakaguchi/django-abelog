@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}有料会員登録{% endblock %}
+
+{% block contents %}
+<div class="a_detail">
+    <div class="store-h1">
+        <h1>有料会員登録</h1>
+    </div>
+    <hr class="hr1 mb-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+            <div>
+                <form method="post">
+                    {% csrf_token %}
+
+                    {{ form.non_field_errors }} <!--フォーム全体に関するエラー（フィールドに特定されないエラー）-->
+                    {{ form.card_brand.errors }} <!--個別フィールドに特有のエラーメッセージ-->
+                    {{ form.title.errors }}
+                    {{ form.exp_month.errors }}
+                    {{ form.exp_year.errors }}
+                    {{ form.cardholder.errors }}
+                    {{ form.last4.errors }}
+
+                    <p class="mt-4 mb-0 text-start fw-bold">カードブランド:</p>
+                    {{ form.card_brand }}
+                    <p class="mt-4 mb-0 text-start fw-bold">カード番号:</p>
+                    {{ form.last4 }}
+                    <div class="text-start" style="color: red;">
+                        {% for error in form.last4.errors %}
+                        <p>正しく修正してください。</p>
+                        {% endfor %}
+                    </div>
+
+                    <p class="mt-4 mb-0 text-start fw-bold">有効期限</p>
+                    <div class="d-flex">
+                        {{ form.exp_month }}
+                        <p style="margin:0  30px;">/</p>
+                        {{ form.exp_year }}
+                    </div>
+                    <p class="mt-4 mb-0 text-start fw-bold">名前(英字)</p>
+                    {{ form.cardholder }}
+            
+                    <button class="mt-4 btn btn-primary" type="submit">送信</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+user = models.ForeignKey(CustomUser, verbose_name='ユーザー',on_delete=models.CASCADE) #ユーザー情報から削除されたらこちらからも削除
+card_brand = models.ForeignKey(CardBrand, on_delete=models.CASCADE)
+last4 = models.CharField(max_length=4) #IntengerFieldを使うと0123が123として保存されてしまうため、文字列として保存してエラーを回避
+
+MONTH_CHOICES = [(i, str(i).zfill(2)) for i in range(1, 13)] #zfillで文字列として1桁の数字を0埋め(1,'01')として格納
+exp_month = models.PositiveIntegerField(verbose_name='有効期限月',choices=MONTH_CHOICES)
+
+CURRENT_YEAR = datetime.datetime.now().year
+YEAR_CHOICES = [(i, str(i)) for i in range(CURRENT_YEAR, CURRENT_YEAR + 20)] #今から20年後までを選択肢として追加
+exp_year = models.PositiveBigIntegerField(verbose_name='有効期限年',choices=YEAR_CHOICES)

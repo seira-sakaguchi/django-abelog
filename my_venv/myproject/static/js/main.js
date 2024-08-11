@@ -149,5 +149,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //トップページ検索画面で、カテゴリボタンが押されたら、検索ボックスに自動で入力されるように
 function setSearchQuery(value) {
-  document.getElementById('search-query').value = value;
+  document.getElementById('search-query').value = value; 
 }
+
+//トップページナビゲーションバーのドロップの表示非表示の切り替え
+document.addEventListener('DOMContentLoaded', ()=> {
+  var menuItem = document.getElementById('menu__item');
+  
+  menuItem.addEventListener('mouseenter', ()=> {
+    var dropMenu = menuItem.querySelector('.drop-menu');
+    dropMenu.style.display = 'block'; //取得したdrop-menu要素のdisplayスタイルプロパティをblockに設定
+  });
+  
+  menuItem.addEventListener('mouseleave', ()=> {
+    var dropMenu = menuItem.querySelector('.drop-menu');
+    dropMenu.style.display = 'none';
+  });
+});
+
+//スマホ画面ハンバーガーメニュー内のドロップダウン
+document.addEventListener('DOMContentLoaded', ()=> {
+  var menuItem = document.getElementById('menu__item');
+
+  menuItem.addEventListener('touchstart', (e)=> { /*「e」は、イベントが発生した時にブラウザによって自動生成される引数*/
+    e.preventDefault(); //これがないといきなりページ遷移してしまう。
+    menuItem.classList.toggle('active');
+  });
+});

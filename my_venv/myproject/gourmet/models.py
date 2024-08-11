@@ -1,10 +1,14 @@
 from django.db import models
 from django.db.models import UniqueConstraint
 from accounts.models import CustomUser
-
+from django.core.validators import RegexValidator
+from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.shortcuts import redirect
 
 CustomUser = get_user_model()
+
+import datetime
 
 # カテゴリ分類(Productクラスより上で定義する必要がある。)
 class Category(models.Model):
@@ -22,7 +26,7 @@ class Category(models.Model):
     ('スペイン料理','スペイン料理')
 ]
 
-    category = models.CharField(verbose_name='ジャンル', choices=category_choices, max_length=50)
+    category = models.CharField(verbose_name='ジャンル', choices=category_choices, max_length=50,null=True,blank=True)
     
     def __str__(self):
         return dict(self.category_choices)[self.category]
@@ -32,7 +36,7 @@ class StoreInfo(models.Model):
     user = models.ForeignKey(CustomUser, verbose_name='ユーザー',on_delete=models.PROTECT)
     store_name = models.CharField(verbose_name='店舗名',max_length=40)
     #カテゴリーはForeignKey
-    category = models.ForeignKey(Category,verbose_name='ジャンル', on_delete=models.PROTECT)
+    category = models.ForeignKey(Category,verbose_name='ジャンル',on_delete=models.PROTECT)
     store_detail = models.TextField(verbose_name='店舗詳細',blank=True, null=True)
     photo1 = models.ImageField(verbose_name='写真1',blank=True,default='noImage.png')
     photo2 = models.ImageField(verbose_name='写真2',blank=True,default='noImage.png')
@@ -82,3 +86,49 @@ class Like(models.Model):
     def __str__(self):
         return f"{self.user.username}が{self.fav.store_name}をいいねしました"
         # return self.fav.store_name
+
+#有料会員リスト
+
+#クレジットカード番号を14~16桁に制限する正規表現
+card_regex = RegexValidator(
+    regex=r'^\d{14,16}$',  # 7桁の数字のみを許容する正規表現
+    message="カード情報が正しくありません。",
+)
+
+#大文字のみを許可する正規表現
+char_regex = RegexValidator(
+    regex = r'^[A-Z\s]+$', #大文字とスペースは許可 
+    message="大文字のアルファベットを入力してください。",
+)
+
+#カードブランドは追加・削除を容易にするため別で定義
+class CardBrand(models.Model):
+    name = models.CharField(verbose_name='カードブランド', max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+class Member(models.Model):
+    user = models.ForeignKey(CustomUser, verbose_name='ユーザー',on_delete=models.CASCADE, null=False) #ユーザー情報から削除されたらこちらからも削除
+    card_brand = models.ForeignKey(CardBrand, on_delete=models.CASCADE)
+    last4 = models.CharField(validators=[card_regex],max_length=16) #IntengerFieldを使うと0123が123として保存されてしまうため、文字列として保存してエラーを回避
+
+    MONTH_CHOICES = [('','月')]+[(i, str(i).zfill(2)) for i in range(1, 13)] #zfillで文字列として1桁の数字を0埋め(1,'01')として格納
+    exp_month = models.PositiveIntegerField(verbose_name='月',choices=MONTH_CHOICES)
+
+    CURRENT_YEAR = datetime.datetime.now().year
+    YEAR_CHOICES = [('','年')]+[(i, str(i)) for i in range(CURRENT_YEAR, CURRENT_YEAR + 20)] #今から20年後までを選択肢として追加
+    exp_year = models.PositiveBigIntegerField(verbose_name='年',choices=YEAR_CHOICES)
+
+    cardholder = models.CharField(validators=[char_regex], verbose_name='カード名義',max_length=50,null=True)
+
+    #同じユーザー名で登録を重複しないように制約をつける(複数カード登録も不可)
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['user'],name='unique_user_member')
+        ]
+
+    def __str__(self):
+        return f"{self.user.full_name}さんが有料会員にプランを変更しました。"
+    
+

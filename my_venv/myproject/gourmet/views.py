@@ -3,7 +3,7 @@ from django.views import generic,View
 from django.views.generic import UpdateView, ListView,DeleteView,DetailView
 from .models import StoreInfo,Reservation,Review,Like,Category
 from accounts.models import CustomUser
-from .forms import ProfileForm,ReservationForm,ReviewForm
+from .forms import ProfileForm,ReservationForm,ReviewForm,MemberForm
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,6 +11,7 @@ from datetime import datetime
 from django.http import JsonResponse,HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum,Avg
+from django.db import IntegrityError
 
 
 
@@ -25,6 +26,7 @@ class TopView(generic.ListView):
         object_list = context['object_list'] #全てのお店リスト
         high_score_list= [] #評価が「3以上」(*現時点)のお店リスト
         high_average_rate_list = [] #評価が「3以上」(*現時点)のお店の平均点リスト
+        high_review_count_list = [] 
         average_rate_list = [] #全ての店舗の評価の平均点のリスト
         review_count_list = [] #各店舗のレビュー件数リスト
 
@@ -40,9 +42,12 @@ class TopView(generic.ListView):
             review_count_list.append(review_count)
 
             average_rate_list.append(average_score)
+
             if average_score >= 3: #評価3以上のお店のみ、high_average_rate_listリストとhigh_score_listに追加
                 high_average_rate_list.append(average_score)
                 high_score_list.append(object)
+                high_review_count= Review.objects.filter(store_name=object).count()
+                high_review_count_list.append(high_review_count)
 
             #店舗名とカテゴリーの辞書型と全店舗のカテゴリーを重複がないようにリストに格納する。
             if not object.category in category_list:
@@ -50,7 +55,7 @@ class TopView(generic.ListView):
                 
         context.update(
             {
-                'high_storeinfo_list':zip(high_score_list,high_average_rate_list,review_count_list), #storeinfo_listは高評価のお店の店舗情報リストと平均評価のリストを合わせたもの++各店舗のレビュー件数
+                'high_storeinfo_list':zip(high_score_list,high_average_rate_list,high_review_count_list), #storeinfo_listは高評価のお店の店舗情報リストと平均評価のリストを合わせたもの++各店舗のレビュー件数
                 'object_list':zip(object_list,average_rate_list,review_count_list), #object_listは全てのお店の店舗情報リストと全てのお店の平均評価リストを合わせたもの+各店舗のレビュー件数
                 'category_list':category_list,
             }
@@ -450,6 +455,28 @@ def toggle_fav(request, store_id):
 
     return JsonResponse({'status':status})
         
+#有料会員登録画面(フォーム)
+class MemberShipView(LoginRequiredMixin, generic.FormView):
+    template_name = 'membership.html'
+    form_class = MemberForm
+    success_url = reverse_lazy('gourmet:top')
+
+    def form_valid(self, form):
+        try:
+            # フォームが有効な場合、会員情報を保存し、メッセージを設定する
+            member = form.save(commit=False)
+            member.user = self.request.user  # userは外部キーのため別で保存する必要がある。
+            #フォームからカード番号情報を取り出す。
+            card_number = form.cleaned_data.get('last4')
+            member.last4 = card_number[-4:] #カード番号の下4桁のみ保存
+            member.save()
+            messages.success(self.request, '有料会員にアップデートしました。')
+            return super().form_valid(form)
+        
+        except IntegrityError:
+            # IntegrityErrorが発生した場合、エラーメッセージを設定する
+            messages.error(self.request, '既に有料会員として登録されています。')
+            return self.form_invalid(form)
 
 
-    
+

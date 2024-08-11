@@ -1,7 +1,7 @@
 from django import forms
 
 from  accounts.models import CustomUser #accounts.models.pyのクラスを継承する。
-from .models import Reservation,Review
+from .models import Reservation,Review,Member
 
 #ユーザー情報
 class ProfileForm(forms.ModelForm):
@@ -52,3 +52,20 @@ class ReviewForm(forms.ModelForm):
         self.fields['content'].widget.attrs['style']='text-align:left'
         self.fields['content'].widget.attrs['placeholder']='口コミの内容を入力してください。'
 
+#有料会員登録
+class MemberForm(forms.ModelForm):
+    class Meta:
+        model = Member
+        fields = ['card_brand','last4','exp_month','exp_year','cardholder']
+
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        for field in self.fields.values(): #selfはインスタンス化されたクラス自身
+            field.widget.attrs['class'] = 'form-control' 
+            field.widget.attrs['style'] = 'text-align:left'
+
+        self.fields['card_brand'].widget.attrs['placeholder']='クレジットカードの種類を選択してください。'
+        self.fields['last4'].widget.attrs['placeholder']='1234 1234 1234 1234'
+        self.fields['cardholder'].widget.attrs['placeholder']='WAKAMARU SAKAGUCHI'
+        self.fields['exp_month'].widget.attrs['style']='width:50px;'
+        self.fields['exp_year'].widget.attrs['style']='width:50px;'

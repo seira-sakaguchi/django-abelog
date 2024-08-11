@@ -131,7 +131,7 @@ main {
 
 /* ハンバーガーメニュークリック後のスタイル */
 .header__nav.active {
-transform: translateX(50%);
+transform: translateX(30%);
 }
 
 /* 真ん中の線を消して×の形にする */
@@ -1076,4 +1076,50 @@ color: #ff7171;
 
 .score-rating #gray{
   color: #E1E1E1;
+}
+
+
+/* メニューのドロップダウン */
+.menu__link {
+  display: block;
+  padding: 10px 20px;
+  position: relative; /* ドロップダウンの位置のための親要素設定(これがないと、その他のメニューもホバーでずれてしまう。) */
+}
+
+.drop-menu {
+  display: none; /* ホバーされていない時は非表示(この部分をjavascriptでnone↔︎blockを切り替えて表示非表示を切り替える。初期状態でnoneなのはデフォルトの設定。) */
+  position: absolute;
+  top: 100%; /* 親の下に配置 */
+  right: 12%;
+  background-color: #ebebeb;
+  transition: all .3s;
+}
+
+.drop-menu__item {
+  display: block;
+  padding: 5px 20px;
+}
+
+.drop-menu__link:hover {
+  background-color: lightcyan;
+}
+
+
+/* スマホ用ドロップダウンメニュー */
+@media screen and (max-width: 960px) {
+  .nav-items__item #menu__item .menu__link {
+    cursor: pointer;
+  }
+
+  .nav-items__item.active .drop-menu { /*activeクラスをtoggleすることで表示非表示を切り替えてる。*/
+    display: block; /*初期状態は共通部分でnone*/
+  }
+
+  .drop-menu {
+    /*子メニュー(ユーザー情報、有料会員登録、管理画面)の位置調整*/
+    position: relative;
+    top: 90%;
+    right: -10%;
+    background-color: #ebebeb;
+  }
 }

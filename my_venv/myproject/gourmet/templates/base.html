@@ -40,7 +40,25 @@
                     <li class="nav-items__item"><a href="{%url 'gourmet:reserve_list'%}">予約確認</a></li>
                     <!-- <li style="font-size: 20px;">|</li> -->
                     <div class="vr mt-2"></div>
-                    <li class="nav-items__item"><a href="{% url 'gourmet:profile' %}">こんにちは{{ user.username }}さん<i class="fa-solid fa-chevron-down"></i></a></li>
+
+                    <!--こんにちは⚪︎⚪︎さんのドロップダウンメニューをつける-->
+                    <li class="nav-items__item" id="menu__item">
+                      <a href="{% url 'gourmet:profile' %}" class="menu__link">こんにちは{{ user.username }}さん<i class="fa-solid fa-chevron-down"></i></a>
+                      <ul class="drop-menu">
+                        <li class="drop-menu__item"><a href="{% url 'gourmet:profile' %}" class="drop-menu__link">ユーザー情報</a></li>
+
+                        <!--コンテキストプロセッサでis_memberのTrue/Falseを定義-->
+                        {% if is_member %}
+                        <strong><li class="drop-menu__item"><a href="#" class="drop-menu__link">有料会員ページへ</a></li></strong>
+                        {% else %}
+                        <li class="drop-menu__item"><a href="{% url 'gourmet:membership' %}" class="drop-menu__link">有料会員登録</a></li>
+                        {% endif %}
+
+                        <li class="drop-menu__item"><a href="{% url 'admin:index' %}" class="drop-menu__link">管理画面</a></li> <!--admin:indexはデフォルトのURL名前空間-->
+
+                      </ul>
+                    </li>
+
                     <li class="nav-items__item"><a href="{% url 'account_logout'%}">ログアウト</a></li>
 
 

@@ -18,4 +18,5 @@ urlpatterns = [
     path('like-list/',views.LikeListView.as_view(),name='like_list'),
     path('toggle-fav/<int:store_id>/', views.toggle_fav,name ='toggle-fav'),
     path('search/',views.SearchResultView.as_view(),name='search'),
+    path('member/',views.MemberShipView.as_view(),name='membership'),
 ]
