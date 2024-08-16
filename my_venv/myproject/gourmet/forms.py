@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import PasswordInput  
 
 from  accounts.models import CustomUser #accounts.models.pyのクラスを継承する。
 from .models import Reservation,Review,Member
@@ -60,12 +61,16 @@ class MemberForm(forms.ModelForm):
 
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
+
+        #下に更新されていってしまうのでこの順番は変えない。
+        self.fields['card_brand'].widget.attrs['placeholder']='クレジットカードの種類を選択してください。'
+        self.fields['last4'].widget = PasswordInput(attrs={'placeholder': '1234 1234 1234 1234'})
+        self.fields['cardholder'].widget.attrs['placeholder']='WAKAMARU SAKAGUCHI'
+
         for field in self.fields.values(): #selfはインスタンス化されたクラス自身
             field.widget.attrs['class'] = 'form-control' 
             field.widget.attrs['style'] = 'text-align:left'
-
-        self.fields['card_brand'].widget.attrs['placeholder']='クレジットカードの種類を選択してください。'
-        self.fields['last4'].widget.attrs['placeholder']='1234 1234 1234 1234'
-        self.fields['cardholder'].widget.attrs['placeholder']='WAKAMARU SAKAGUCHI'
+        
         self.fields['exp_month'].widget.attrs['style']='width:50px;'
-        self.fields['exp_year'].widget.attrs['style']='width:50px;'
+        self.fields['exp_year'].widget.attrs['style']='width:60px;'
+

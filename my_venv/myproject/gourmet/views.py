@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views import generic,View
-from django.views.generic import UpdateView, ListView,DeleteView,DetailView
-from .models import StoreInfo,Reservation,Review,Like,Category
+from django.views.generic import UpdateView, ListView,DeleteView,DetailView,TemplateView
+from .models import StoreInfo,Reservation,Review,Like,Category,Member
 from accounts.models import CustomUser
 from .forms import ProfileForm,ReservationForm,ReviewForm,MemberForm
 from django.urls import reverse_lazy
@@ -477,6 +477,43 @@ class MemberShipView(LoginRequiredMixin, generic.FormView):
             # IntegrityErrorが発生した場合、エラーメッセージを設定する
             messages.error(self.request, '既に有料会員として登録されています。')
             return self.form_invalid(form)
+        
+#会員専用ページ
+class MemberPageView(LoginRequiredMixin,TemplateView):
+    template_name = 'membership_page.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # ログインユーザーに関連するMemberオブジェクトを取得し、コンテキストに追加
+        context['member'] = get_object_or_404(Member, user=self.request.user) #Memberモデルのidをここから取得できるようになる。
+        return context
 
 
+
+#有料会員情報変更フォーム
+class MemberUpdateView(LoginRequiredMixin,UpdateView):
+    model = Member
+    template_name = 'membership_edit.html'
+    form_class = MemberForm
+    success_url = reverse_lazy('gourmet:membership_page')
+
+
+    def form_valid(self,form):
+        messages.success(self.request,"会員情報を更新しました。")
+        return super().form_valid(form)
+    
+    def form_invalid(self,form):
+        messages.error(self.request,"会員情報の更新に失敗しました。")
+        return super().form_invalid(form)
+
+#有料会員解約
+class MembershipDeleteView(LoginRequiredMixin,DeleteView):
+    model = Member
+    success_url = reverse_lazy('gourmet:top')
+    print("ここまで来てるんか？")
+    template_name = 'membership_delete.html'
+        
+    def form_valid(self,form):
+        messages.success(self.request,"有料会員を解約しました。")
+        return super().form_valid(form)
 

@@ -1123,3 +1123,36 @@ color: #ff7171;
     background-color: #ebebeb;
   }
 }
+
+/*有料会員情報編集ボタン*/
+.member-edit {
+  background-color: #fff;
+  border: double 6px #3cb371;
+  font-weight: bold;
+  color: #3cb371;
+  border-radius: 10px;
+  padding: 10px 30px;
+  text-decoration: none;
+  font-size: 1em;
+}
+.member-edit:hover {
+  color: #3cb371;
+  background-color: #f0fff0;
+}
+
+/*ナビゲーションバーをアクティブに*/
+.nav-active.active{
+  font-weight: bold;
+}
+
+.nav-items__item:hover {
+  /*1.15倍に拡大*/
+  -webkit-transform: scale(1.15);
+  transform: scale(1.15);
+}
+
+.nav-items__item {
+  /* 初期状態にも同じトランジションを適用 */
+  -webkit-transition: all 0.5s ease-out;
+  transition: all 0.5s ease-out;
+}

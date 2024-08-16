@@ -19,4 +19,7 @@ urlpatterns = [
     path('toggle-fav/<int:store_id>/', views.toggle_fav,name ='toggle-fav'),
     path('search/',views.SearchResultView.as_view(),name='search'),
     path('member/',views.MemberShipView.as_view(),name='membership'),
+    path('only-member/',views.MemberPageView.as_view(),name='membership_page'),
+    path('member-update/<int:pk>/',views.MemberUpdateView.as_view(),name='membership_edit'),
+    path('membership-delete/<int:pk>/',views.MembershipDeleteView.as_view(),name='membership_delete'),
 ]

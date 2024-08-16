@@ -24,7 +24,7 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('category',)
 
 class MemberAdmin(admin.ModelAdmin):
-    list_display = ('get_full_name','exp_month','exp_year')
+    list_display = ('id','get_full_name','exp_month','exp_year')
 
     def get_full_name(self,obj):
         return obj.user.full_name
