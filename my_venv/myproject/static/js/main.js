@@ -167,12 +167,28 @@ document.addEventListener('DOMContentLoaded', ()=> {
   });
 });
 
-//スマホ画面ハンバーガーメニュー内のドロップダウン
-document.addEventListener('DOMContentLoaded', ()=> {
-  var menuItem = document.getElementById('menu__item');
 
-  menuItem.addEventListener('touchstart', (e)=> { /*「e」は、イベントが発生した時にブラウザによって自動生成される引数*/
-    e.preventDefault(); //これがないといきなりページ遷移してしまう。
-    menuItem.classList.toggle('active');
+//ドロップダウンメンニューが押された時の動作
+document.addEventListener('DOMContentLoaded', () => {
+  var menuItem = document.getElementById('menu__item');
+  var dropMenuLinks = menuItem.querySelectorAll('.drop-menu__link');
+
+  const toggleMenu = (e) => {
+    // クリックされた要素がリンクでない場合に preventDefault を適用する
+    if (!e.target.classList.contains('drop-menu__link')) {
+      e.preventDefault();
+      menuItem.classList.toggle('active');
+    }
+  };
+
+  // スマホでのタッチイベントとクリックイベントに対応
+  menuItem.addEventListener('touchstart', toggleMenu);
+  menuItem.addEventListener('click', toggleMenu);
+
+  // メニュー内のリンクをクリックした場合は通常のリンク動作を適用
+  dropMenuLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      // 通常通りリンクがクリックされた場合はページ遷移
+    });
   });
 });

@@ -38,6 +38,7 @@ class StoreInfo(models.Model):
     #カテゴリーはForeignKey
     category = models.ForeignKey(Category,verbose_name='ジャンル',on_delete=models.PROTECT)
     store_detail = models.TextField(verbose_name='店舗詳細',blank=True, null=True)
+    store_address = models.TextField(verbose_name='店舗住所',blank=True,null=True)
     photo1 = models.ImageField(verbose_name='写真1',blank=True,default='noImage.png')
     photo2 = models.ImageField(verbose_name='写真2',blank=True,default='noImage.png')
     photo3 = models.ImageField(verbose_name='写真3',blank=True,default='noImage.png')

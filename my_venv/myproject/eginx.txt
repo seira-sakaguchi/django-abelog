@@ -1,0 +1,17 @@
+server{
+        listen 80;
+        server_name 34.235.34.95;
+ 
+ 
+        location =/fabicon.ico {access_log off; log_not_found off;}
+        location /static/{
+                root /home/ubuntu/django-tabelog-kadai/my_venv/myproject;
+        }
+ 
+ 
+        location /{
+                include proxy_params;
+                proxy_pass http://unix:/home/ubuntu/django-tabelog-kadai/my_venv/myproject/myproject.sock;
+        }
+}
+

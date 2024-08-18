@@ -26,7 +26,7 @@ ul.tab-nav li a.button {
 }
 
 ul.tab-nav li a.active.button {
-    border-bottom: 0.175em solid #fff;
+    border-bottom: 0.175em solid rgb(228, 110, 110);
 }
 
 .tab-content .tab-pane {

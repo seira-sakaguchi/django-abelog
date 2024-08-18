@@ -510,9 +510,7 @@ class MemberUpdateView(LoginRequiredMixin,UpdateView):
 class MembershipDeleteView(LoginRequiredMixin,DeleteView):
     model = Member
     success_url = reverse_lazy('gourmet:top')
-    print("ここまで来てるんか？")
-    template_name = 'membership_delete.html'
-        
+    template_name = 'membership_delete.html'        
     def form_valid(self,form):
         messages.success(self.request,"有料会員を解約しました。")
         return super().form_valid(form)

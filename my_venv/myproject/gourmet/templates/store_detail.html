@@ -110,6 +110,9 @@
             <div class="desc">
                 <u><p>店舗説明:</p></u>
                 <p>{{ object.store_detail }}</p>
+                <br><br>
+                <u>住所:</u>
+                <p>{{object.store_address}}</p>
             </div>
           </div>
   
@@ -121,7 +124,7 @@
             <form method="post">
               {% csrf_token %}
               {{ form.as_p }}
-              <button type="submit"  id="submit" class="btn btn-success btn-lg mt-4">予約する</button>
+              <button type="submit"  id="submit" class="btn btn-success btn-lg mt-4" style="display: flex; justify-content: center; align-items: center;margin: auto;">予約する</button>
             </form>  
           </div>
         </div>
