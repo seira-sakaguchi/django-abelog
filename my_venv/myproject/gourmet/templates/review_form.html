@@ -9,7 +9,7 @@
         <h1>{{ store }}のレビューフォーム</h1>
     </div>
     <hr class="hr1 mb-5">
-    <form method="post">
+    <form method="post" enctype="multipart/form-data"> <!--enctypeがないとアップロードした画像が正しく保存されない。-->
         {%  csrf_token %}
         <div class="star_row">
             <div class="stars">
@@ -28,12 +28,21 @@
         {{ form.title.errors }}
         {{ form.content.errors }}
         {{ form.score.errors }}
+        {{ form.review_photo1.errors }}
         <p class="mt-4 mb-0 text-start fw-bold">ニックネーム:</p>
         {{ form.handle }}
         <p class="mt-4 mb-0 text-start fw-bold">タイトル:</p>
         {{ form.title }}
         <p class="mt-4 mb-0 text-start fw-bold">レビュー内容:</p>
         {{ form.content }}
+        <p class="mt-4 mb-0 text-start fw-bold">レビュー写真:</p>
+        {{form.review_photo1}}
+        <br>
+        {{form.review_photo2}}
+        <br>
+        {{form.review_photo3}}
+
+
         <input type="hidden" name="store_id" value="{{ store.id }}">
         <div>
             <a style="vertical-align: bottom; margin-right: 14px;color: rgb(47, 144, 177); text-decoration: underline !important;" href="{% url 'gourmet:detail' store.id %}">戻る</a>

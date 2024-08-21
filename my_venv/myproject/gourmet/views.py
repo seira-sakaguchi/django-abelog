@@ -12,6 +12,7 @@ from django.http import JsonResponse,HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum,Avg
 from django.db import IntegrityError
+import random
 
 
 
@@ -20,10 +21,13 @@ class TopView(generic.ListView):
     model = StoreInfo
     template_name = 'top.html'
 
+    #ここまで戻れたら復旧完了だぜ。
     def get_context_data(self,**kwargs):
         context = super(TopView, self).get_context_data(**kwargs)
 
         object_list = context['object_list'] #全てのお店リスト
+
+        object_list = list(StoreInfo.objects.all()) #①# 最初にオブジェクトリストを取得してリストに変換
         high_score_list= [] #評価が「3以上」(*現時点)のお店リスト
         high_average_rate_list = [] #評価が「3以上」(*現時点)のお店の平均点リスト
         high_review_count_list = [] 
@@ -42,21 +46,28 @@ class TopView(generic.ListView):
             review_count_list.append(review_count)
 
             average_rate_list.append(average_score)
+  
 
             if average_score >= 3: #評価3以上のお店のみ、high_average_rate_listリストとhigh_score_listに追加
                 high_average_rate_list.append(average_score)
                 high_score_list.append(object)
                 high_review_count= Review.objects.filter(store_name=object).count()
                 high_review_count_list.append(high_review_count)
+        
 
             #店舗名とカテゴリーの辞書型と全店舗のカテゴリーを重複がないようにリストに格納する。
             if not object.category in category_list:
                 category_list.append(object.category)
+
+        #全ての店舗一覧をシャッフルに
+        combined_list = list(zip(object_list, average_rate_list, review_count_list))
+        random.shuffle(combined_list)
+
                 
         context.update(
             {
                 'high_storeinfo_list':zip(high_score_list,high_average_rate_list,high_review_count_list), #storeinfo_listは高評価のお店の店舗情報リストと平均評価のリストを合わせたもの++各店舗のレビュー件数
-                'object_list':zip(object_list,average_rate_list,review_count_list), #object_listは全てのお店の店舗情報リストと全てのお店の平均評価リストを合わせたもの+各店舗のレビュー件数
+                'object_list':combined_list, #全てのお店情報がランダムに表示される
                 'category_list':category_list,
             }
         )
@@ -105,7 +116,7 @@ class SearchResultView(generic.ListView):
 
         if query:
             # キーワードに基づいてフィルタリングされた全ての店舗リストを取得
-            category_obj = Category.objects.filter(category=query).first()
+            category_obj = Category.objects.filter(category__exact=query).first()
             if category_obj:
                 all_list = StoreInfo.objects.filter(store_name__icontains=query) | StoreInfo.objects.filter(category=category_obj)
             else:
@@ -346,7 +357,7 @@ def submit_review(request,store_id):
     }
 
     if request.method == 'POST':
-        form = ReviewForm(request.POST)
+        form = ReviewForm(request.POST,request.FILES) #request.FILESがないと画像保存できない。
         if form.is_valid():
             review = form.save(commit=False) #フォームを一時保存
             review.store_name = store #外部キーであるstore_nameの値を取得

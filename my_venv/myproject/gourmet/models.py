@@ -23,7 +23,17 @@ class Category(models.Model):
     ('焼肉','焼肉'),
     ('韓国料理','韓国料理'),
     ('タイ料理','タイ料理'),
-    ('スペイン料理','スペイン料理')
+    ('スペイン料理','スペイン料理'),
+    ('海鮮','海鮮'),
+    ('洋食','洋食'),
+    ('バー','バー'),
+    ('ハンバーガー','ハンバーガー'),
+    ('スイーツ','スイーツ'),
+    ('カレー','カレー'),
+    ('鉄板焼き/お好み','鉄板焼き/お好み'),
+    ('ラーメン','ラーメン'),
+    ('その他(ベーカリー)','その他(ベーカリー)'),
+    ('串/揚げ物','串/揚げ物')
 ]
 
     category = models.CharField(verbose_name='ジャンル', choices=category_choices, max_length=50,null=True,blank=True)
@@ -36,7 +46,7 @@ class StoreInfo(models.Model):
     user = models.ForeignKey(CustomUser, verbose_name='ユーザー',on_delete=models.PROTECT)
     store_name = models.CharField(verbose_name='店舗名',max_length=40)
     #カテゴリーはForeignKey
-    category = models.ForeignKey(Category,verbose_name='ジャンル',on_delete=models.PROTECT)
+    category = models.ForeignKey(Category,verbose_name='ジャンル',on_delete=models.CASCADE)
     store_detail = models.TextField(verbose_name='店舗詳細',blank=True, null=True)
     store_address = models.TextField(verbose_name='店舗住所',blank=True,null=True)
     photo1 = models.ImageField(verbose_name='写真1',blank=True,default='noImage.png')
@@ -69,6 +79,9 @@ class Review(models.Model):
     content = models.TextField(verbose_name='レビュー内容')
     create_at = models.DateTimeField(verbose_name='作成日時',auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日時',auto_now=True)
+    review_photo1 = models.ImageField(verbose_name='レビュー写真1',upload_to='reviews/',blank=True,default='noImage.png')
+    review_photo2 = models.ImageField(verbose_name='レビュー写真2',upload_to='reviews/',blank=True,default='noImage.png')
+    review_photo3 = models.ImageField(verbose_name='レビュー写真3',upload_to='reviews/',blank=True,default='noImage.png')
 
     def __str__(self):
         return self.user.username

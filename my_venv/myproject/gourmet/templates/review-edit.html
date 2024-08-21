@@ -34,6 +34,13 @@
         {{ form.title }}
         <p class="mt-4 mb-0 text-start fw-bold">レビュー内容:</p>
         {{ form.content }}
+
+        {{form.review_photo1}}
+        <br>
+        {{form.review_photo2}}
+        <br>
+        {{form.review_photo3}}
+        
         <input type="hidden" name="store_id" value="{{ review.store_name.id }}">
         <div>
             <a style="vertical-align: bottom; margin-right: 18px;color: rgb(47, 144, 177); text-decoration: underline !important;" href="{% url 'gourmet:detail' review.store_name.id %}">戻る</a>

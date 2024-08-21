@@ -1042,6 +1042,11 @@ color: #ff7171;
   height: 327px !important;
   }
 
+  .card {
+    display: flex;
+    align-items: stretch; /* 子要素を縦に揃える */
+}
+
   .card-photo img{
     position: absolute;
     top: 0;
@@ -1051,6 +1056,14 @@ color: #ff7171;
     max-height: 100%;
     width: auto; /* 横幅に合わせて高さを調整 */
     object-fit: cover; /* 画像が親要素に合わせて切り取られる */
+  }
+
+  .card-title{
+    margin-left: 70px;
+  }
+
+  .card-text{
+    padding-left: 150px;
   }
 
   .score-rating{

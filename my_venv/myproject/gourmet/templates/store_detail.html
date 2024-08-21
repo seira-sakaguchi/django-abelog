@@ -187,7 +187,14 @@
       <hr style="color: #7d7c7c; margin-top: 5px;">
       投稿日時: {{ review.create_at }}
       <h3  class="review-title" style="font-size: 15px; font-weight: bold;" >{{ review.title }}</h3><br> <!--タイトル-->
-      {{ review.content }}<br>  
+      {{ review.content }}
+      <br>  
+      <br>
+      <img src="{{ review.review_photo1.url }}" class="img-thumbnail0" style="max-width: 100%; max-height: 150px; margin-left: 10px;">
+      <img src="{{ review.review_photo2.url }}" class="img-thumbnail0" style="max-width: 100%; max-height: 150px;margin-left: 10px">
+      <img src="{{ review.review_photo3.url }}" class="img-thumbnail0" style="max-width: 100%; max-height: 150px;margin-left: 10px">
+
+
     </div>
         
     {% empty %}

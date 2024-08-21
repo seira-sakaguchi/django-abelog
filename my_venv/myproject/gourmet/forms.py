@@ -39,7 +39,7 @@ class ReservationForm(forms.ModelForm):
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = ['score','handle','title','content']
+        fields = ['score','handle','title','content','review_photo1','review_photo2','review_photo3']
     def __init__(self,*args,**kwargs):  
         super().__init__(*args,**kwargs)
         self.fields['handle'].widget.attrs['class']='form-control'
@@ -52,6 +52,10 @@ class ReviewForm(forms.ModelForm):
         self.fields['content'].widget.attrs['class']='form-control'
         self.fields['content'].widget.attrs['style']='text-align:left'
         self.fields['content'].widget.attrs['placeholder']='口コミの内容を入力してください。'
+        self.fields['review_photo1'].widget.attrs['class']='form-control'
+        self.fields['review_photo2'].widget.attrs['class']='form-control'
+        self.fields['review_photo3'].widget.attrs['class']='form-control'
+
 
 #有料会員登録
 class MemberForm(forms.ModelForm):
