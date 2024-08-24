@@ -1033,18 +1033,36 @@ color: #ff7171;
 .search_container input[type="submit"]{
   cursor: pointer;
   font-family: FontAwesome;
-  font-size: 1.2em;
+  font-size: 1.4em;
   border: none;
   background: #3879D9;
   border: 1px solid #3879D9;
   border-radius: 3px;
   color: #fff;
   outline : none;
-  width: 3.5em;
-  height: 1.9em;
+  width: 3.8em;
+  height: 1.55em;
   display: inline-block;
   vertical-align: middle;
 }
+
+/* 959px以下=スマホで適応 */
+@media screen and (max-width: 959px) {
+  .category-btn button{
+    height: 30px;
+  }
+
+  #search-query{
+    height: 30px;
+  }
+
+  .search_container input[type="submit"]{
+    height: 2.8em;
+    font-size: 3em;
+  }
+
+}
+
 
 /*検索結果テンプレート*/
 /* 960px以上=PCで適応 */
