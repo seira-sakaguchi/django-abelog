@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}トップページ{% endblock %}
+{% block title %}あべろぐ | トップページ{% endblock %}
 
 {% block head %}
 {% endblock %}
@@ -113,9 +113,10 @@
 
 <!-- カードタイプのカルーセル<全てのお店一覧>(開始) -->
 <div class="card02 mt-5">
-  <h1 class="reco-title" style="font-size: 20px; font-weight: bold; margin:30px 0;">全てのお店一覧</h1>
+  <h1 class="reco-title" style="font-size: 20px; font-weight: bold; margin:30px 0;">全てのお店一覧(全{{total_stores}}件)</h1>
+  
   <div class="l-inner">
-
+    <p class="mb-3">*店舗の表示順はランダムです。</p>
     <div class="swiper-area">
       <div class="swiper">
         <div class="swiper-wrapper">
@@ -158,7 +159,7 @@
       <div class="swiper-button-prev"></div>
       <div class="swiper-button-next"></div>
     </div><!-- /swiper-area -->
-    <div class="swiper-pagination"></div>
+    <!-- <div class="swiper-pagination"></div> --> <!--下のページネートを非表示に(店舗が増えるとページネーションが数行になりごつく感じるから。)-->
 
   </div>
 </div>
