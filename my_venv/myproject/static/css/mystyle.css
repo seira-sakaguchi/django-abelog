@@ -9,6 +9,13 @@ li {
   list-style: none;
 }
 
+/* 959px以下=スマホで適応 */
+@media screen and (max-width: 959px) {
+  main * {
+    font-size: 110% !important; /*「*」でmainタグ内の全てのテキストに適用*/
+  } 
+}
+
 main {
   background-color: #FFF;
   height: 2000px;

@@ -103,7 +103,7 @@
         <!--お気に入り機能終了-->
 
         <div class="row" style="margin-top:80px;">
-          <div class="store-info col-md-8" style="padding: 10px; margin-bottom: 10px; border: 1px dotted #333333; border-radius: 5px;">
+          <div class="store-info col-md-8" style="padding: 10px; margin-bottom: 10px; border: 1px dotted #333333; border-radius: 5px; height: auto;">
             <strong>{{ object.store_name }}</strong>
             <br>
             <p style="text-indent: 2rem; font-style: italic;">{{object.category}}</p>
@@ -190,10 +190,15 @@
       {{ review.content }}
       <br>  
       <br>
+      {% if review.review_photo1 %}
       <img src="{{ review.review_photo1.url }}" class="img-thumbnail0" style="max-width: 100%; max-height: 150px; margin-left: 10px;">
+      {% endif %}
+      {% if review.review_photo2 %}
       <img src="{{ review.review_photo2.url }}" class="img-thumbnail0" style="max-width: 100%; max-height: 150px;margin-left: 10px">
+      {% endif %}
+      {% if review.review_photo3 %}
       <img src="{{ review.review_photo3.url }}" class="img-thumbnail0" style="max-width: 100%; max-height: 150px;margin-left: 10px">
-
+      {% endif %}
 
     </div>
         
