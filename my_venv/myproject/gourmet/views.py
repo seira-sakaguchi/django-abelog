@@ -190,6 +190,12 @@ class StoreDetailView(generic.DetailView):
         pk = self.kwargs['pk']
         form = ReservationForm(request.POST)
 
+        # ユーザーがログインしていない場合はログインページにリダイレクト
+        if not request.user.is_authenticated:
+            messages.error(request, 'ログインが必要です。')
+            request.session['next'] = request.path  # 現在のページのURLをセッションに保存
+            return redirect(f"{reverse('account_login')}?next={request.path}")  # ログインページにリダイレクト
+
         #もし、ユーザー情報が登録されていなければ先にプロフィールを更新するように遷移させる。
         if not request.user.full_name and not request.user.address:
             messages.error(request, '予約をするには、まずユーザー情報を登録してください。')

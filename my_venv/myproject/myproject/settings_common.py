@@ -146,8 +146,8 @@ ACCOUNT_USERNAME_REQUIRED = 'False'
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_REQUIRED = True
 
-#ログイン/ログアウト後の遷移先を設定(******ページ作成後設定する*******)
-LOGIN_REDIRECT_URL = 'gourmet:top'
+#ログイン/ログアウト後の遷移先を設定
+LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'gourmet:top'
 
 #ログアウトリンクのクリック一発でログアウトする設定
