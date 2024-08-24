@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}有料会員限定{% endblock %}
+
+{% block contents %}
+<div class="a_detail">
+    <div class="store-h1">
+        <h1>有料会員限定ページ</h1>
+    </div>
+    <hr class="hr1 mb-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+            <div>
+                <p>こちらは会員限定のページです。<br>月額300円で会員限定機能が使い放題!</p>
+                <br>
+                <a  class="member-edit" href="{% url 'gourmet:membership_edit' member.pk %}">会員情報を変更する</a>
+            </div>
+        </div>
+    </div>
+</div>
+<a style="position: absolute; top: 20px; right: 30px;" href="{% url 'gourmet:membership_delete' member.pk %}">解約する</a>
+
+
+{% endblock %}
+
+
+
