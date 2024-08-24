@@ -12,8 +12,12 @@ li {
 /* 959px以下=スマホで適応 */
 @media screen and (max-width: 959px) {
   main * {
-    font-size: 105% !important; /*「*」でmainタグ内の全てのテキストに適用*/
-  } 
+    font-size: 108% !important; /*「*」でmainタグ内の全てのテキストに適用*/
+  }
+  
+  main{
+    height: 3000px !important;
+  }
 }
 
 main {

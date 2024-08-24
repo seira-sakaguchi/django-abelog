@@ -4,7 +4,7 @@ from django.views.generic import UpdateView, ListView,DeleteView,DetailView,Temp
 from .models import StoreInfo,Reservation,Review,Like,Category,Member
 from accounts.models import CustomUser
 from .forms import ProfileForm,ReservationForm,ReviewForm,MemberForm
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy,reverse 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import datetime
@@ -13,6 +13,8 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum,Avg
 from django.db import IntegrityError
 import random
+import logging
+logger = logging.getLogger(__name__)
 
 
 
@@ -191,6 +193,7 @@ class StoreDetailView(generic.DetailView):
         #もし、ユーザー情報が登録されていなければ先にプロフィールを更新するように遷移させる。
         if not request.user.full_name and not request.user.address:
             messages.error(request, '予約をするには、まずユーザー情報を登録してください。')
+            request.session['next'] = request.path  # 現在のページのURLをセッションに保存
             return redirect('gourmet:profile')  # 名前登録ページにリダイレクト
 
         if form.is_valid():
@@ -211,6 +214,7 @@ class StoreDetailView(generic.DetailView):
     #     store = self.get_object()
     #     context['reviews'] = Review.objects.filter(store_name=store).order_by('-create_at')
     #     return context
+
 
 #予約確認画面  
 class ConfirmReservation(LoginRequiredMixin,View): #Viewクラスを継承するときは"def post"や"def get"などの関数を使用する。
@@ -332,7 +336,12 @@ class ProfileUpdateView(LoginRequiredMixin,UpdateView):
 
     def form_valid(self,form):
         messages.success(self.request,"ユーザー情報を更新しました。")
-        return super().form_valid(form)
+
+        super().form_valid(form)
+
+        # セッションに保存された元のページのURLにリダイレクト
+        next_url = self.request.session.pop('next', reverse('gourmet:profile'))
+        return redirect(next_url)
     
     def form_invalid(self,form):
         messages.error(self.request,"ユーザー情報の更新に失敗しました。")
@@ -367,7 +376,8 @@ def submit_review(request,store_id):
     else:
         form = ReviewForm(initial=initial_data) #フォームの初期化
     return render(request, 'review_form.html',{'form':form,'store': store})
-    
+
+
 #レビューの編集フォーム
 class ReviewUpdateView(UpdateView):
     model = Review
