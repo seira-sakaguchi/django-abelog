@@ -197,6 +197,7 @@
       <br>  
       <br>
       <!--写真クリックで拡大できるように変更-->
+      <div class="review-img">
       {% if review.review_photo1 %}
       <a href="{{ review.review_photo1.url }}" data-lightbox="review-{{ review.id }}" data-title="1枚目"><img src="{{ review.review_photo1.url }}" style="width: 200px; max-height: 200px; margin-left: 10px;"></a>
       {% endif %}
@@ -206,6 +207,7 @@
       {% if review.review_photo3 %}
       <a href="{{ review.review_photo3.url }}" data-lightbox="review-{{ review.id }}" data-title="3枚目"><img src="{{ review.review_photo3.url }}" style="width: 200px; max-height: 200px; margin-left: 10px;"></a>
       {% endif %}
+    </div>
 
     </div>
         

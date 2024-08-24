@@ -12,7 +12,7 @@ li {
 /* 959px以下=スマホで適応 */
 @media screen and (max-width: 959px) {
   main * {
-    font-size: 110% !important; /*「*」でmainタグ内の全てのテキストに適用*/
+    font-size: 100% !important; /*「*」でmainタグ内の全てのテキストに適用*/
   } 
 }
 
@@ -848,6 +848,12 @@ font-size: 25px;
 text-decoration:underline;
 text-decoration-style:dotted;
 text-decoration-color: rgb(237, 219, 192);
+}
+
+@media screen and (max-width: 959px) {
+  .review-img img{
+    margin: 10px;
+  } 
 }
 
 /*いいねのハートマーク*/
