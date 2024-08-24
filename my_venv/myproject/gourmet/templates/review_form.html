@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}レビューフォーム{% endblock %}
+
+{% block contents %}
+<div class="a_detail">
+    <div class="store-h1">
+        <h1>{{ store }}のレビューフォーム</h1>
+    </div>
+    <hr class="hr1 mb-5">
+    <form method="post" enctype="multipart/form-data"> <!--enctypeがないとアップロードした画像が正しく保存されない。-->
+        {%  csrf_token %}
+        <div class="star_row">
+            <div class="stars">
+                <p class="mt-4 mb-0 fw-bold">お店の総合評価:</p>
+                <span>
+                    <input id="star5" type="radio" name="score" value="5" class="star-rating"><label for="star5">★</label>
+                    <input id="star4" type="radio" name="score" value="4" class="star-rating"><label for="star4">★</label>
+                    <input id="star3" type="radio" name="score" value="3" class="star-rating"><label for="star3">★</label>
+                    <input id="star2" type="radio" name="score" value="2" class="star-rating"><label for="star2">★</label>
+                    <input id="star1" type="radio" name="score" value="1" class="star-rating"><label for="star1">★</label>
+                </span>
+            </div>
+        </div>
+        {{ form.non_field_errors }} <!--フォーム全体に関するエラー（フィールドに特定されないエラー）-->
+        {{ form.handle.errors }} <!--handleフィールドに特有のエラー。例: 「ニックネームは必須です」-->
+        {{ form.title.errors }}
+        {{ form.content.errors }}
+        {{ form.score.errors }}
+        {{ form.review_photo1.errors }}
+        <p class="mt-4 mb-0 text-start fw-bold">ニックネーム:</p>
+        {{ form.handle }}
+        <p class="mt-4 mb-0 text-start fw-bold">タイトル:</p>
+        {{ form.title }}
+        <p class="mt-4 mb-0 text-start fw-bold">レビュー内容:</p>
+        {{ form.content }}
+        <p class="mt-4 mb-0 text-start fw-bold">レビュー写真:</p>
+        {{form.review_photo1}}
+        <br>
+        {{form.review_photo2}}
+        <br>
+        {{form.review_photo3}}
+
+
+        <input type="hidden" name="store_id" value="{{ store.id }}">
+        <div>
+            <a style="vertical-align: bottom; margin-right: 14px;color: rgb(47, 144, 177); text-decoration: underline !important;" href="{% url 'gourmet:detail' store.id %}">戻る</a>
+            <button type="submit" class="btn btn-primary mt-4">送信する</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+
+.tab-container{
+    display: flex;
+    justify-content: center;
+    padding-top: 30px;
+}
+
+ul.tab-nav {
+    list-style: none;
+    border-bottom: 1px solid #bbb;
+}
+
+ul.tab-nav li {
+    display: inline;
+}
+
+ul.tab-nav li a {
+    font-size: 1.1rem;
+}
+
+ul.tab-nav li a.button {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-bottom: -1px;
+    border-bottom: none;
+}
+
+ul.tab-nav li a.active.button {
+    border-bottom: 0.175em solid rgb(228, 110, 110);
+}
+
+.tab-content .tab-pane {
+    display: none;
+}
+
+.tab-content .tab-pane.active {
+    display: block;
+}
