@@ -79,6 +79,16 @@ const mySwiper3 = new Swiper('.card02 .swiper', {
   },
 });
 
+//店舗詳細画面の写真のスワイパー
+document.addEventListener('DOMContentLoaded', function() {
+  const swiper = new Swiper("#loop", {
+    loop: true,
+    navigation: {
+    nextEl: ".custom-next",
+    prevEl: ".custom-prev"
+    }
+  });
+});
 
 
 //お気に入り機能(ハートマーク)の非同期処理(店舗詳細ページ)
