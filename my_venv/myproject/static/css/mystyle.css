@@ -1122,6 +1122,11 @@ color: #ff7171;
   top: 10px ;
   font-size: 15px;
 }  
+.card-text{
+  text-align: left;
+}
+
+
 }
 
 .score-rating #orange{

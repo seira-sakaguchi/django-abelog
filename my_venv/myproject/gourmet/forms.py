@@ -76,5 +76,5 @@ class MemberForm(forms.ModelForm):
             field.widget.attrs['style'] = 'text-align:left'
         
         self.fields['exp_month'].widget.attrs['style']='width:50px;'
-        self.fields['exp_year'].widget.attrs['style']='width:60px;'
+        self.fields['exp_year'].widget.attrs['style']='width:75px;'
 

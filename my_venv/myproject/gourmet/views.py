@@ -29,6 +29,7 @@ class TopView(generic.ListView):
         object_list = context['object_list'] #全てのお店リスト
 
         object_list = list(StoreInfo.objects.all()) #①# 最初にオブジェクトリストを取得してリストに変換
+        total_stores = len(object_list)
         high_score_list= [] #評価が「3以上」(*現時点)のお店リスト
         high_average_rate_list = [] #評価が「3以上」(*現時点)のお店の平均点リスト
         high_review_count_list = [] 
@@ -64,12 +65,17 @@ class TopView(generic.ListView):
         combined_list = list(zip(object_list, average_rate_list, review_count_list))
         random.shuffle(combined_list)
 
+        #おすすめ店舗一覧をランダムに
+        combined_recom_list = list(zip(high_score_list, high_average_rate_list, high_review_count_list))
+        random.shuffle(combined_recom_list)
+
                 
         context.update(
             {
-                'high_storeinfo_list':zip(high_score_list,high_average_rate_list,high_review_count_list), #storeinfo_listは高評価のお店の店舗情報リストと平均評価のリストを合わせたもの++各店舗のレビュー件数
+                'high_storeinfo_list':combined_recom_list, #storeinfo_listは高評価のお店の店舗情報リストと平均評価のリストを合わせたもの++各店舗のレビュー件数
                 'object_list':combined_list, #全てのお店情報がランダムに表示される
                 'category_list':category_list,
+                'total_stores':total_stores #全店舗数
             }
         )
         return context
