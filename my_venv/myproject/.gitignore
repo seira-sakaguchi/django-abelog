@@ -1,5 +1,6 @@
 # 仮想環境ディレクトリを無視
 my_env/
+myvenvprod/
 
 # Python bytecode files
 __pycache__/
