@@ -21,6 +21,12 @@
 <link rel="stylesheet" href="{% static 'css/skeleton-tabs.css' %}">
 <link rel="stylesheet" href="{% static 'css/skeleton.css' %}">
 
+
+<!--写真の拡大機能(テスト)-->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js" defer type="text/javascript"></script>
+
 {% endblock %}
 
 {% block contents %}
@@ -190,14 +196,15 @@
       {{ review.content }}
       <br>  
       <br>
+      <!--写真クリックで拡大できるように変更-->
       {% if review.review_photo1 %}
-      <img src="{{ review.review_photo1.url }}" class="img-thumbnail0" style="max-width: 100%; max-height: 150px; margin-left: 10px;">
+      <a href="{{ review.review_photo1.url }}" data-lightbox="review-{{ review.id }}" data-title="1枚目"><img src="{{ review.review_photo1.url }}" style="width: 200px; max-height: 200px; margin-left: 10px;"></a>
       {% endif %}
       {% if review.review_photo2 %}
-      <img src="{{ review.review_photo2.url }}" class="img-thumbnail0" style="max-width: 100%; max-height: 150px;margin-left: 10px">
+      <a href="{{ review.review_photo2.url }}" data-lightbox="review-{{ review.id }}" data-title="2枚目"><img src="{{ review.review_photo2.url }}" style="width: 200px; max-height: 200px; margin-left: 10px;"></a>
       {% endif %}
       {% if review.review_photo3 %}
-      <img src="{{ review.review_photo3.url }}" class="img-thumbnail0" style="max-width: 100%; max-height: 150px;margin-left: 10px">
+      <a href="{{ review.review_photo3.url }}" data-lightbox="review-{{ review.id }}" data-title="3枚目"><img src="{{ review.review_photo3.url }}" style="width: 200px; max-height: 200px; margin-left: 10px;"></a>
       {% endif %}
 
     </div>

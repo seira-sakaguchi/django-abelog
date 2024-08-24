@@ -21,7 +21,6 @@ class TopView(generic.ListView):
     model = StoreInfo
     template_name = 'top.html'
 
-    #ここまで戻れたら復旧完了だぜ。
     def get_context_data(self,**kwargs):
         context = super(TopView, self).get_context_data(**kwargs)
 
