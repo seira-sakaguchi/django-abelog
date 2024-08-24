@@ -1,2 +1,6 @@
 # 仮想環境ディレクトリを無視
 my_env/
+
+# Python bytecode files
+__pycache__/
+*.pyc
