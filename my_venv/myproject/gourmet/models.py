@@ -79,9 +79,9 @@ class Review(models.Model):
     content = models.TextField(verbose_name='レビュー内容')
     create_at = models.DateTimeField(verbose_name='作成日時',auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日時',auto_now=True)
-    review_photo1 = models.ImageField(verbose_name='レビュー写真1',upload_to='reviews/',blank=True,default='noImage.png')
-    review_photo2 = models.ImageField(verbose_name='レビュー写真2',upload_to='reviews/',blank=True,default='noImage.png')
-    review_photo3 = models.ImageField(verbose_name='レビュー写真3',upload_to='reviews/',blank=True,default='noImage.png')
+    review_photo1 = models.ImageField(verbose_name='レビュー写真1',upload_to='reviews/',blank=True)
+    review_photo2 = models.ImageField(verbose_name='レビュー写真2',upload_to='reviews/',blank=True)
+    review_photo3 = models.ImageField(verbose_name='レビュー写真3',upload_to='reviews/',blank=True)
 
     def __str__(self):
         return self.user.username
