@@ -19,8 +19,8 @@
             </form>
             {% else %}
                 {% url 'account_email' as email_url %}
-                <p>リンクの有効期限が過ぎています
-                <a href="{{email_url}}">再申請</a></p>
+                <p>リンクの有効期限が過ぎています</p>
+                <a class="btn btn-warning mt-4" href="{{email_url}}">再申請</a>
             {% endif %}
           </div>
         </div>

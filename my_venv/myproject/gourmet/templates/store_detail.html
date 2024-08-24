@@ -24,7 +24,6 @@
 
 <!--写真の拡大機能(テスト)-->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.css" rel="stylesheet">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js" defer type="text/javascript"></script>
 
 {% endblock %}
@@ -193,7 +192,7 @@
       <hr style="color: #7d7c7c; margin-top: 5px;">
       投稿日時: {{ review.create_at }}
       <h3  class="review-title" style="font-size: 15px; font-weight: bold;" >{{ review.title }}</h3><br> <!--タイトル-->
-      {{ review.content }}
+      {{ review.content|linebreaksbr }}  <!--linebreaksbrで投稿者が行った改行を<br>として処理してくれる=レビュー一覧で改行される。-->
       <br>  
       <br>
       <!--写真クリックで拡大できるように変更-->
