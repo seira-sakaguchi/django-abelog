@@ -28,6 +28,22 @@
                             </div>
                             <!--店舗説明(開始)-->
                             <div class="col-md-8">
+                                <!--定休日or営業日の確認-->
+                            <div class="text-end" style="margin-right: 20px;">
+                            {% if weekday == storeinfo.holiday  or weekday == storeinfo.holiday2 or weekday == storeinfo.holiday3 %}
+                            <p><span style="background-color: red; font-size: 30px;color: #FFF;">定休日</span></p>
+                            {% elif storeinfo.holiday == '不定休' or  storeinfo.holiday2 == '不定休' or storeinfo.holiday3 == '不定休' %}
+                            <p><span style="background-color: yellow; font-size: 18px; width:auto">不定休</span></p>
+                                {% if storeinfo.irregular %}
+                                <p>({{  storeinfo.irregular }})</p>
+                                {% endif %}
+                            {% elif storeinfo.holiday == '臨時休業' %}
+                            <p ><span style="background-color: red; font-size: 18px;color: #FFF;">臨時休業中</span></p>
+                            {% else %}
+                                <p><span style="background-color: chartreuse; font-size: 18px;color: #878383; font-weight: bold;">本日営業日</span></p>
+                            {% endif %}
+                            </div>
+
                                 <div class="card-body">
                                     <h1 class="card-title">{{storeinfo.store_name}}</h1>
                                     <p style="text-indent: 3rem; font-style: italic;">{{storeinfo.category}}</p>

@@ -22,7 +22,7 @@ li {
 
 main {
   background-color: #FFF;
-  height: 2200px;
+  height: 2300px;
   width: 100%;
   position: relative;
   margin-top: 50px; /*ナビゲーションバーの下にメインのコンテンツが配置されるようにする*/
@@ -49,7 +49,7 @@ main {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 999;
+  z-index: 99;
 }
 
 .header__inner {
@@ -108,14 +108,16 @@ main {
 
 /* ハンバーガーメニュー */
 .header__hamburger {
+  padding: initial; /*これがないと店舗詳細画面でskeltontabのcssが適応されて三本線が表示されない*/
   width: 48px;
   height: 100%;
+  z-index: 100000;
 }
 
 .hamburger {
   background-color: transparent; /*buttonタグデフォルトスタイルを打ち消し*/
   border-color: transparent; /*buttonタグデフォルトスタイルを打ち消し*/
-  z-index: 9999;
+  z-index: 100000;
 }
 
 /* ハンバーガーメニューの線 */
@@ -126,6 +128,7 @@ main {
   position: relative;
   transition: ease .4s; /*ハンバーガーメニュークリック時の三本線の動きを遅延*/
   display: block;
+  z-index: 100000;
 }
 
 .hamburger span:nth-child(1) {

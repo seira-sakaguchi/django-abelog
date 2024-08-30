@@ -55,6 +55,30 @@ class StoreInfo(models.Model):
     create_at = models.DateTimeField(verbose_name='作成日時',auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日時',auto_now=True)
 
+    #定休日追加
+    holiday_choices = [
+    ('月' ,'月'),
+    ('火','火'),
+    ('水','水'),
+    ('木','木'),
+    ('金','金'),
+    ('土','土'),
+    ('日','日'),
+    ('不定休','不定休'),
+    ('なし','なし'),
+    ('臨時休業','臨時休業')
+    ]
+    holiday = models.CharField(verbose_name='定休日1',choices=holiday_choices,max_length=10,blank=True,null=True)
+    holiday2 = models.CharField(verbose_name='定休日2',choices=holiday_choices,max_length=10,blank=True,null=True)
+    holiday3 = models.CharField(verbose_name='定休日3',choices=holiday_choices,max_length=10,blank=True,null=True)
+
+
+    #不定休の場合は備考記載
+    irregular = models.CharField(verbose_name='不定休の場合は備考を記入してください。',max_length=200,blank=True,null=True)
+
+    
+
+
     class Meta:
         verbose_name_plural = 'StoreInfo'
 

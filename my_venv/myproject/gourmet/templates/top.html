@@ -96,6 +96,22 @@
                 {% else %}
                 <p>*評価がまだありません</p>
                 {% endif %}
+
+                <!--営業日かどうか-->
+                {% if weekday == storeinfo.holiday  or weekday == storeinfo.holiday2 or weekday == storeinfo.holiday3 %}
+                <p><span style="background-color: red; font-size: 18px;color: #FFF;">定休日</span></p>
+                {% elif storeinfo.holiday == '不定休' or  storeinfo.holiday2 == '不定休' or storeinfo.holiday3 == '不定休' %}
+                <p><span style="background-color: yellow; font-size: 18px; width:auto">こちらのお店は不定休です。</span></p>
+                  {% if storeinfo.irregular %}
+                  <p>({{  storeinfo.irregular }})</p>
+                  {% endif %}
+                {% elif storeinfo.holiday == '臨時休業' %}
+                <p ><span style="background-color: red; font-size: 18px;color: #FFF;">臨時休業中</span></p>
+              {% else %}
+                <p><span style="background-color: chartreuse; font-size: 18px;color: #878383; font-weight: bold;">本日営業日</span></p>
+              {% endif %}
+          
+
               </div>
             </article>
           </a>
@@ -151,6 +167,20 @@
                 {% else %}
                 <p>*評価がまだありません</p>
                 {% endif %}
+
+                <!--営業日かどうか-->
+                {% if weekday == object.holiday  or weekday == object.holiday2 or weekday == object.holiday3 %}
+                <p><span style="background-color: red; font-size: 18px;color: #FFF;">定休日</span></p>
+                {% elif object.holiday == '不定休' or  object.holiday2 == '不定休' or object.holiday3 == '不定休' %}
+                <p><span style="background-color: yellow; font-size: 18px; width:auto">こちらのお店は不定休です。</span></p>
+                  {% if object.irregular %}
+                  <p>({{  object.irregular }})</p>
+                  {% endif %}
+                {% elif object.holiday == '臨時休業' %}
+                <p ><span style="background-color: red; font-size: 18px;color: #FFF;">臨時休業中</span></p>
+              {% else %}
+                <p><span style="background-color: chartreuse; font-size: 18px;color: #878383; font-weight: bold;">本日営業日</span></p>
+              {% endif %}
               </div>
             </article>
           </a>

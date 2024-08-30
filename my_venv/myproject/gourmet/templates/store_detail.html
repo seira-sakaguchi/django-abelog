@@ -51,14 +51,34 @@
 
 <!--タブのバー1つめ-->
   <div class="tab-pane active" id="one">
+
     <div class="a_detail">
       <div class="store-h1">
           <h1>店舗詳細</h1>
       </div>
       <hr class="hr1 mb-5">
-      <!--カルーセル部分-->
-    
 
+      <!--定休日or営業日の確認-->
+      <div >
+      <!-- <p>本日は{{weekday}}曜日</p> -->
+      <!-- <p>定休日:{{object.holiday}}</p> -->
+      {% if weekday == object.holiday  or weekday == object.holiday2 or weekday == object.holiday3 %}
+      <p><span style="background-color: red; font-size: 30px;color: #FFF;">定休日</span></p>
+      {% elif object.holiday == '不定休' or  object.holiday2 == '不定休' or object.holiday3 == '不定休' %}
+      <p><span style="background-color: yellow; font-size: 30px; width:auto">こちらのお店は不定休です。</span></p>
+        {% if object.irregular %}
+        <p>{{  object.irregular }}</p>
+        {% else %}
+        <p>詳細は公式HP、instagramやX、商業施設の営業時間などでご確認ください。</p>
+      {% endif %}
+      {% elif object.holiday == '臨時休業' %}
+      <p ><span style="background-color: red; font-size: 30px;color: #FFF;">臨時休業中</span></p>
+    {% else %}
+      <p><span style="background-color: chartreuse; font-size: 30px;color: #878383; font-weight: bold;">本日営業日</span><br>*営業時間・定休日は変更となる場合がございますので、ご来店前に店舗にご確認ください。</p>
+    {% endif %}
+      </div>
+
+      
 
         <!-- Sliderを包むコンテナ要素 -->
       <div class="d-con">
@@ -84,10 +104,6 @@
           <div class="custom-next"><i class="fa fa-chevron-right"></i></div>
         </div>
       </div>
-
-      <script>
-       
-      </script>
         
         <!--お気に入り機能-->
         <div class="fav col-md-9 mt-3">
@@ -121,11 +137,15 @@
                 <br><br>
                 <u>住所:</u>
                 <p>{{object.store_address}}</p>
+                <br><br>
+                <u>定休日:</u>
+                <strong>{% if object.holiday %}{{object.holiday}}{% endif %}{% if object.holiday2 %}・{{object.holiday2}}{% endif %}{% if object.holiday3 %}・{{object.holiday3}}{% endif %}</strong>
+                {% if object.irregular %}(*{{object.irregular}}){% endif %}
             </div>
           </div>
   
         <!--カレンダーから予約するページ-->
-        <section class="section col-md-4">
+        <section class="section col-md-4 mt-5">
           <div class="section__block section__block--scoped">
             <h3 style="font-size: 15px; font-weight: bold; margin-bottom: 8px;">予約する</h3>   
   
