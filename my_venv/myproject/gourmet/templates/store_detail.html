@@ -57,37 +57,40 @@
       </div>
       <hr class="hr1 mb-5">
       <!--カルーセル部分-->
-      <div id="carouselExample" class="carousel slide">
-          <div class="carousel-inner">
-            <div class="carousel-item active">
+    
+
+
+        <!-- Sliderを包むコンテナ要素 -->
+      <div class="d-con">
+        <div class="swiper" id="loop" style="margin-top: 50px;">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
               {% if object.photo1 %}
-                  <img src="{{ object.photo1.url}}" class="d-block w-90" alt="...">
+                <img src="{{ object.photo1.url }}" alt="Photo 1">
               {% endif %}
             </div>
-            <div class="carousel-item">
+            <div class="swiper-slide">
               {% if object.photo2 %}
-                  <img src="{{ object.photo2.url}}" class="d-block w-90" alt="...">
+                <img src="{{ object.photo2.url }}" alt="Photo 2">
               {% endif %}
             </div>
-            <div class="carousel-item">
+            <div class="swiper-slide">
               {% if object.photo3 %}
-                  <img src="{{ object.photo3.url}}" class="d-block w-90" alt="...">
+                <img src="{{ object.photo3.url }}" alt="Photo 3">
               {% endif %}
             </div>
           </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-            <span class="bi bi-arrow-left-circle-fill" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-            <span class="bi bi-arrow-right-circle-fill" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
+          <div class="custom-prev"><i class="fa fa-chevron-left"></i></div>
+          <div class="custom-next"><i class="fa fa-chevron-right"></i></div>
         </div>
-        <!--カルーセル終了-->
+      </div>
+
+      <script>
+       
+      </script>
         
         <!--お気に入り機能-->
-        <div class="fav col-md-8 mt-3">
+        <div class="fav col-md-9 mt-3">
           <form id="fav-form" method="post" action="{% url 'gourmet:toggle_favorite' store_id=storeinfo.pk %}">
             {% csrf_token %}
             {% if user.is_authenticated %}
@@ -135,6 +138,7 @@
         </div>
     </div>
   </div>
+  
       <script>
           $(document).ready(function(){
             $('.js__datepicker').pickadate({
@@ -222,6 +226,5 @@
   <!--タブのバー3つめ-->
   <div class="tab-pane" id="three">そのほか</div>
 </div>
-
 
 {% endblock %}
