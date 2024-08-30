@@ -14,6 +14,7 @@ from django.db.models import Sum,Avg
 from django.db import IntegrityError
 import random
 import logging
+import datetime
 logger = logging.getLogger(__name__)
 
 
@@ -38,6 +39,12 @@ class TopView(generic.ListView):
 
         #カテゴリーのみリスト(重複なし)
         category_list = []
+
+        #今日の曜日を取得
+        week_list = ['月','火','水','木','金','土','日'] #0が月曜日
+        weekday_number = datetime.date.today().weekday()
+        weekday = week_list[weekday_number]
+        context['weekday'] = weekday
 
         for object in object_list:              
 
@@ -121,6 +128,13 @@ class SearchResultView(generic.ListView):
         context = super(SearchResultView, self).get_context_data(**kwargs)
         query = self.request.GET.get('query')  # 検索画面で入力されたキーワードをquery変数に代入
 
+
+        #今日の曜日を取得
+        week_list = ['月','火','水','木','金','土','日'] #0が月曜日
+        weekday_number = datetime.date.today().weekday()
+        weekday = week_list[weekday_number]
+        context['weekday'] = weekday
+
         if query:
             # キーワードに基づいてフィルタリングされた全ての店舗リストを取得
             category_obj = Category.objects.filter(category__exact=query).first()
@@ -182,6 +196,12 @@ class StoreDetailView(generic.DetailView):
 
         restaurant_id = self.kwargs['pk']
         restaurant_name = StoreInfo.objects.filter(id=restaurant_id)[0].store_name
+
+        #今日の曜日を取得
+        week_list = ['月','火','水','木','金','土','日'] #0が月曜日
+        weekday_number = datetime.date.today().weekday()
+        weekday = week_list[weekday_number]
+        context['weekday'] = weekday
 
         if self.request.user.is_authenticated: #ログインしていない状態で店舗詳細画面に遷移しようとするとエラーになるため場合わけ
             context['user_likes'] = Like.objects.filter(user=self.request.user).values_list('fav',flat=True) #favはLikeモデルのフィールド名
