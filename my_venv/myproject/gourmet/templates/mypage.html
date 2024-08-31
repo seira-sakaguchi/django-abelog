@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}あべろぐ | ほかろぐ{% endblock %}
+{% block active-effe3 %}active{% endblock %}
+
+
+{% block contents %}
+<style>
+@media (max-width: 767px) {
+    main {
+        height: 3550px; /* 必要に応じて高さを調整 */
+    }
+}
+
+
+/* Swiper コンテナのスタイル */
+.swiper-container {
+    position: relative; /* 親要素としての相対位置 */
+    height: 180px; /* 画像の高さに合わせて調整 */
+    overflow: hidden; /* スライドがコンテナを超えないようにする */
+}
+
+/* スライド内の画像のサイズ調整 */
+.swiper-slide {
+    width: 100%; /* 各スライドの幅をコンテナに合わせる */
+    height: 100%; /* 各スライドの高さをコンテナに合わせる */
+}
+
+/* スライド内の画像のサイズ調整 */
+.swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* ナビゲーションボタンのスタイル */
+.swiper-button-next, .swiper-button-prev {
+    position: absolute; /* 親要素内での絶対位置指定 */
+    top: 50%; /* 親要素の高さの中央に配置 */
+    transform: translateY(-50%); /* 縦方向の中央揃え */
+    color: #fff; /* ボタンの色 */
+    background: rgba(0, 0, 0, 0.5); /* ボタンの背景色 */
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10; /* ボタンを画像の上に表示 */
+}
+
+/* 右側のナビゲーションボタン */
+.swiper-button-next {
+    right: 10px; /* 右端からの距離 */
+}
+
+/* 左側のナビゲーションボタン */
+.swiper-button-prev {
+    left: 10px; /* 左端からの距離 */
+}
+
+/* ページネーションのスタイル */
+.swiper-pagination-bullet {
+    background: rgba(255, 255, 255, 0.5); /* デフォルトの点の色（白の半透明） */
+}
+
+/* アクティブなバレットのスタイル */
+.swiper-pagination-bullet-active {
+    background: #fff !important; /* アクティブな点の色（白） */
+}
+
+.swiper-pagination {
+    position: absolute;
+    bottom: 10px; /* ページネーションを下部に配置 */
+    left: 50%; /* 中央に配置 */
+    transform: translateX(-50%); /* 水平方向で中央揃え */
+    z-index: 15; /* 画像より上に表示 */
+    display: flex;
+    justify-content: center; /* 中央揃え */
+}
+
+
+
+</style>
+
+<!-- Swiper JS の初期化 -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var swiper = new Swiper('.swiper-container', {
+        slidesPerView: 1,
+        spaceBetween: 10,
+        pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+        bulletActiveClass: 'swiper-pagination-bullet-active',
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+    });
+});
+
+</script>
+
+
+
+
+
+
+<div class="a_detail">
+    <div class="store-h1">
+        <h1>ほかろぐ</h1>
+    </div>
+    <hr class="hr1 mb-5">
+    <div class="d-flex justify-content-end">
+        <a href="{% url 'gourmet:mypage_form' %}" class="btn btn-lg hoka-btn" >+</a>
+    </div>
+    <a href="{% url 'gourmet:ourpage' %}" style="display: block; text-align: left; margin: 30px 0; font-size: 20px !important;"><u>みんろぐページへ</u></a>
+
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-3 g-5">
+            {% for mypage in mypages %}
+            <div class="col mb-5">
+                <div class="card" style="height: 450px !important; display: flex; flex-direction: column;">
+                    <div class="swiper-container">
+                        <div class="swiper-wrapper">
+                            {% if mypage.photo1 %}
+                            <div class="swiper-slide">
+                                <img src="{{ mypage.photo1.url }}" class="card-img-top">
+                            </div>
+                            {% endif %}
+                            {% if mypage.photo2 %}
+                            <div class="swiper-slide">
+                                <img src="{{ mypage.photo2.url }}" class="card-img-top">
+                            </div>
+                            {% endif %}
+                            {% if mypage.photo3 %}
+                            <div class="swiper-slide">
+                                <img src="{{ mypage.photo3.url }}" class="card-img-top">
+                            </div>
+                            {% endif %}
+                        </div>
+                        <!-- Add Pagination -->
+                        <div class="swiper-pagination"></div>
+                        <!-- Add Navigation -->
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
+                    </div>
+
+                    <div class="card-body d-flex flex-column text-start" style="flex: 1;">
+                        <p class="text-end">{{mypage.create_at}}</p>
+                        <p class="text-end mb-2" style="font-style: italic;">{{mypage.user}}</p>
+                        <h5 class="card-title"><strong>{{ mypage.store_name }}</strong></h5>
+                        <p class="card-text" style="padding-left: 0; margin-bottom: 20px;">{{ mypage.feeling }}</p>
+                        <div style="margin-top: auto;">
+                            <p><i class="fa-solid fa-location-dot"></i>{{ mypage.store_address }}</p>
+                            <p>#{{ mypage.category }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                <a href="{% url 'gourmet:mypage_edit' pk=mypage.pk %}" style="margin-right: 15px;"><u>編集</u></a>
+                <a href="{% url 'gourmet:mypage_delete' pk=mypage.pk %}" style="margin-right: 10px;"><u>削除</u></a>
+                </div>
+            </div>
+            {% empty %}
+            <p class="mt-5">レビューはありません。</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <ul class="Pagination">
+        {% if page_obj.has_previous %}
+        <li class="Pagination-Item">
+            <a class="Pagination-Item-Link" href="?page={{ page_obj.previous_page_number }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="Pagination-Item-Link-Icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+        <li class="Pagination-Item">
+            <a class="Pagination-Item-Link {% if page_obj.number == num %}isActive{% endif %}" href="?page={{ num }}"><span>{{ num }}</span></a>
+        </li>
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="Pagination-Item">
+            <a class="Pagination-Item-Link" href="?page={{ page_obj.next_page_number }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="Pagination-Item-Link-Icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+            </a>
+        </li>
+        {% endif %}
+    </ul>  
+
+{% endblock %}

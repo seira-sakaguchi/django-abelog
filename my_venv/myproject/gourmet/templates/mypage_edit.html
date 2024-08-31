@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}あべろぐ | ほかろぐ編集{% endblock %}
+
+{% block contents %}
+<div class="a_detail">
+    <div class="store-h1">
+        <h1>{{ mypages.store_name }}のほかろぐ(編集中)</h1>
+    </div>
+    <hr class="hr1 mb-5">
+    <form method="post">
+        {%  csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+        <div class="form-group row mb-4">
+            <label for="{{ field.id_for_label }}" class="col-sm-3 col-form-label"><strong>{{ field.label }}</strong></label>
+            <div class="col-sm-9">
+                {{ field }}
+                {{ field.errors }}
+            </div>
+        </div>
+        {% endfor %}
+        <div>
+            <a style="vertical-align: bottom; margin-right: 18px;color: rgb(47, 144, 177); text-decoration: underline !important;" href="{% url 'gourmet:mypage' %}">戻る</a>
+            <button type="submit" class="btn btn-primary mt-4">更新</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

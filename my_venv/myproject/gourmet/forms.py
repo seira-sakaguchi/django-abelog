@@ -2,7 +2,7 @@ from django import forms
 from django.forms import PasswordInput  
 
 from  accounts.models import CustomUser #accounts.models.pyのクラスを継承する。
-from .models import Reservation,Review,Member
+from .models import Reservation,Review,Member,Mypage
 
 #ユーザー情報
 class ProfileForm(forms.ModelForm):
@@ -77,4 +77,20 @@ class MemberForm(forms.ModelForm):
         
         self.fields['exp_month'].widget.attrs['style']='width:50px;'
         self.fields['exp_year'].widget.attrs['style']='width:75px;'
+
+#マイページ(他ログ)
+class MypageForm(forms.ModelForm):
+    class Meta:
+        model = Mypage
+        fields = ['store_name','category','store_address','feeling','photo1','photo2','photo3']
+
+         #全フォームフィールドに一括でBootstrapのform-controlクラスを追加できる。
+    def __init__(self,*args,**kwargs):  
+        super().__init__(*args,**kwargs)
+        for field in self.fields.values(): #selfはインスタンス化されたクラス自身
+            field.widget.attrs['class'] = 'form-control' 
+            field.widget.attrs['style']='text-align:left'
+        self.fields['feeling'].widget.attrs['placeholder']='最大70文字'
+
+
 

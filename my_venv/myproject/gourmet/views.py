@@ -1,9 +1,9 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views import generic,View
 from django.views.generic import UpdateView, ListView,DeleteView,DetailView,TemplateView
-from .models import StoreInfo,Reservation,Review,Like,Category,Member
+from .models import StoreInfo,Reservation,Review,Like,Category,Member,Mypage
 from accounts.models import CustomUser
-from .forms import ProfileForm,ReservationForm,ReviewForm,MemberForm
+from .forms import ProfileForm,ReservationForm,ReviewForm,MemberForm,MypageForm
 from django.urls import reverse_lazy,reverse 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -566,4 +566,75 @@ class MembershipDeleteView(LoginRequiredMixin,DeleteView):
     def form_valid(self,form):
         messages.success(self.request,"有料会員を解約しました。")
         return super().form_valid(form)
+    
+#マイページのリスト
+class MypageListView(LoginRequiredMixin,generic.ListView):
+    model = Mypage
+    template_name = 'mypage.html'
+    context_object_name = 'mypages'
+    paginate_by = 6
+
+    def get_queryset(self):
+        # 投稿日時で降順に並べる
+        return Mypage.objects.filter(user=self.request.user).order_by('-create_at') #ログインユーザーの投稿のみ表示
+    
+#公開ページのリスト
+class OurpageListView(LoginRequiredMixin,generic.ListView):
+    model = Mypage
+    template_name = 'ourpage.html'
+    context_object_name = 'mypages'
+    paginate_by = 6
+
+    def get_queryset(self):
+        # 投稿日時で降順に並べる
+        return Mypage.objects.order_by('-create_at') #全ユーザーの投稿が表示される。
+
+
+
+#ほかろぐの投稿フォーム
+class MyPageFormView(LoginRequiredMixin, generic.FormView):
+    template_name = 'mypage_form.html'  
+    form_class = MypageForm
+    success_url = reverse_lazy('gourmet:mypage')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user  # ユーザー情報を追加
+        form.save()  # フォームを保存
+        messages.success(self.request, "ほかろぐを投稿しました。")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+    
+#ほかろぐ編集
+class MypageUpdateView(LoginRequiredMixin,UpdateView):
+    model = Mypage
+    template_name = 'mypage_edit.html'
+    form_class =  MypageForm
+    success_url = reverse_lazy('gourmet:mypage')
+    context_object_name = 'mypages'
+
+    def form_valid(self,form):
+        messages.success(self.request,'ほかろぐを更新しました。')
+        return super().form_valid(form)
+    
+    def form_invalid(self,form):
+        messages.error(self.request,'ほかろぐの更新に失敗しました。')
+        return super().form_invalid(form)
+    
+#ほかろぐ削除
+class MypageDeleteView(LoginRequiredMixin,generic.DeleteView):
+    model = Mypage
+    template_name = 'mypage_delete.html'
+    success_url = reverse_lazy('gourmet:mypage')
+    context_object_name = 'mypages'
+
+    def form_valid(self,form):
+        messages.success(self.request,"ほかろぐを削除しました。")
+        return super().form_valid(form)
+    
+    def form_invalid(self,form):
+        messages.error(self.request,'ほかろぐの更新に失敗しました。')
+        return super().form_invalid(form)
+    
 

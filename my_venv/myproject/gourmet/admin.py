@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import CustomUser,StoreInfo,Category,Reservation,Review,Like,Member,CardBrand
+from .models import CustomUser,StoreInfo,Category,Reservation,Review,Like,Member,CardBrand,Mypage
 
 
 
@@ -30,6 +30,11 @@ class MemberAdmin(admin.ModelAdmin):
         return obj.user.full_name
     get_full_name.short_description = 'フルネーム'
 
+class MypageAdmin(admin.ModelAdmin):
+    list_display = ('id','store_name', 'category')
+    search_fields = ('store_name','category__category')
+
+
 
 admin.site.register(CustomUser,CustomUserAdmin)
 admin.site.register(StoreInfo,StoreInfoAdmin)
@@ -39,5 +44,5 @@ admin.site.register(Review,ReviewAdmin)
 admin.site.register(Like)
 admin.site.register(Member,MemberAdmin)
 admin.site.register(CardBrand)
-
+admin.site.register(Mypage,MypageAdmin)
 
