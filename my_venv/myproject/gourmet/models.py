@@ -32,8 +32,9 @@ class Category(models.Model):
     ('カレー','カレー'),
     ('鉄板焼き/お好み','鉄板焼き/お好み'),
     ('ラーメン','ラーメン'),
-    ('その他(ベーカリー)','その他(ベーカリー)'),
-    ('串/揚げ物','串/揚げ物')
+    ('ベーカリー','ベーカリー'),
+    ('串/揚げ物','串/揚げ物'),
+    ('その他','その他')
 ]
 
     category = models.CharField(verbose_name='ジャンル', choices=category_choices, max_length=50,null=True,blank=True)
@@ -169,4 +170,22 @@ class Member(models.Model):
     def __str__(self):
         return f"{self.user.full_name}さんが有料会員にプランを変更しました。"
     
+#マイページ(他ログ)
+class Mypage(models.Model):
+    user = models.ForeignKey(CustomUser, verbose_name='ユーザー',on_delete=models.CASCADE)
+    store_name = models.CharField(verbose_name='お店の名前',max_length=40)
+    #カテゴリーはForeignKey
+    category = models.ForeignKey(Category,verbose_name='ジャンル',on_delete=models.CASCADE)
+    store_address = models.CharField(verbose_name='お店の場所',max_length=40,blank=True,null=True)
+    feeling = models.TextField(verbose_name='お店の感想',max_length=70)
+    photo1 = models.ImageField(verbose_name='写真1(必須)')
+    photo2 = models.ImageField(verbose_name='写真2',blank=True)
+    photo3 = models.ImageField(verbose_name='写真3',blank=True)
+    create_at = models.DateTimeField(verbose_name='作成日時',auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name='更新日時',auto_now=True)
 
+    class Meta:
+        verbose_name_plural = 'マイページ'
+
+    def __str__(self):
+        return self.store_name

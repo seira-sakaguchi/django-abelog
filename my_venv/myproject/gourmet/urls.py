@@ -22,4 +22,9 @@ urlpatterns = [
     path('only-member/',views.MemberPageView.as_view(),name='membership_page'),
     path('member-update/<int:pk>/',views.MemberUpdateView.as_view(),name='membership_edit'),
     path('membership-delete/<int:pk>/',views.MembershipDeleteView.as_view(),name='membership_delete'),
+    path('mypage/',views.MypageListView.as_view(),name='mypage'),
+    path('mypage-form/',views.MyPageFormView.as_view(),name='mypage_form'),
+    path('mypage-edit/<int:pk>',views.MypageUpdateView.as_view(),name='mypage_edit'),
+    path('mypage-delete/<int:pk>',views.MypageDeleteView.as_view(),name='mypage_delete'),
+    path('ourpage/',views.OurpageListView.as_view(),name='ourpage'),
 ]
