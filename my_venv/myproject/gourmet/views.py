@@ -596,6 +596,7 @@ class MyPageFormView(LoginRequiredMixin, generic.FormView):
     template_name = 'mypage_form.html'  
     form_class = MypageForm
     success_url = reverse_lazy('gourmet:mypage')
+    paginate_by = 6
 
     def form_valid(self, form):
         form.instance.user = self.request.user  # ユーザー情報を追加
