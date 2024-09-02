@@ -5,3 +5,6 @@ myvenvprod/
 # Python bytecode files
 __pycache__/
 *.pyc
+
+#sqlite3無視
+db.sqlite3

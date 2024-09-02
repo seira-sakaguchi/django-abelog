@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import CustomUser,StoreInfo,Category,Reservation,Review,Like,Member,CardBrand,Mypage
+from .models import CustomUser,StoreInfo,Category,Reservation,Review,Like,Member,CardBrand,Mypage,WantPlace
 
 
 
@@ -34,6 +34,11 @@ class MypageAdmin(admin.ModelAdmin):
     list_display = ('id','store_name', 'category')
     search_fields = ('store_name','category__category')
 
+class WantPlaceAdmin(admin.ModelAdmin):
+    list_display = ('store_name', 'comment')
+    search_fields = ('store_name','comment')
+                     
+
 
 
 admin.site.register(CustomUser,CustomUserAdmin)
@@ -45,4 +50,5 @@ admin.site.register(Like)
 admin.site.register(Member,MemberAdmin)
 admin.site.register(CardBrand)
 admin.site.register(Mypage,MypageAdmin)
+admin.site.register(WantPlace,WantPlaceAdmin)
 

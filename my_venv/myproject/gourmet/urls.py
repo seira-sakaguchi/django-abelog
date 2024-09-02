@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+
 app_name = 'gourmet'
 urlpatterns = [
     path('',views.TopView.as_view(), name='top'),
@@ -27,4 +28,8 @@ urlpatterns = [
     path('mypage-edit/<int:pk>',views.MypageUpdateView.as_view(),name='mypage_edit'),
     path('mypage-delete/<int:pk>',views.MypageDeleteView.as_view(),name='mypage_delete'),
     path('ourpage/',views.OurpageListView.as_view(),name='ourpage'),
+    path('want-list/',views.WantView.as_view(),name='want_list'),
+    path('want-list-form/',views.WantFormView.as_view(),name='want_list_form'),
+    path('want-list-edit/<int:pk>/',views.WantUpdateView.as_view(),name='want_edit'),
+    path('want-list-delete/<int:pk>/',views.WantDeleteView.as_view(),name='want_delete'),
 ]
