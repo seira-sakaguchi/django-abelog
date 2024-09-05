@@ -15,3 +15,50 @@ server{
         }
 }
 
+# http wwwなしからのリダイレクト
+server {
+    listen 80;
+    listen [::]:80;
+    server_name abelog1900.com;
+    return 301 https://$host$request_uri;
+}
+ 
+ 
+# http https wwwありからのリダイレクト
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name www.abelog1900.com;
+    ssl_certificate /etc/letsencrypt/live/abelog1900.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/abelog1900.com/privkey.pem;
+    return 301 https://abelog1900.com$request_uri;
+}
+ 
+ 
+# リダイレクトを流される側の設定
+server {
+    listen 443 ssl default_server;
+    server_name abelog1900.com;
+    ssl on;
+    ssl_certificate /etc/letsencrypt/live/abelog1900.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/abelog1900.com/privkey.pem;
+ 
+ 
+    location =/fabicon.ico {access_log off; log_not_found off;}
+ 
+ 
+        location /static{
+        alias /usr/share/nginx/html/static;
+        }
+        
+        location /media{
+        alias /usr/share/nginx/html/media;
+        }
+
+ 
+    location /{
+                include proxy_params;
+                proxy_pass http://unix:/home/ubuntu/django-tabelog-kadai/my_venv/myproject/myproject.sock;
+        }
+}
+

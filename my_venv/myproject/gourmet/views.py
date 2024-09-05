@@ -1,9 +1,9 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views import generic,View
 from django.views.generic import UpdateView, ListView,DeleteView,DetailView,TemplateView
-from .models import StoreInfo,Reservation,Review,Like,Category,Member,Mypage
+from .models import StoreInfo,Reservation,Review,Like,Category,Member,Mypage,WantPlace
 from accounts.models import CustomUser
-from .forms import ProfileForm,ReservationForm,ReviewForm,MemberForm,MypageForm
+from .forms import ProfileForm,ReservationForm,ReviewForm,MemberForm,MypageForm,WantPlaceForm
 from django.urls import reverse_lazy,reverse 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,6 +15,7 @@ from django.db import IntegrityError
 import random
 import logging
 import datetime
+from django.views.decorators.csrf import csrf_exempt
 logger = logging.getLogger(__name__)
 
 
@@ -445,23 +446,6 @@ class ReviewDeleteView(LoginRequiredMixin,generic.DeleteView):
         messages.success(self.request,"レビューを削除しました。")
         return super().form_valid(form)
 
-
-# #お気に入り機能(同期処理)
-# def like_rest(request,store_id):
-#     store = get_object_or_404(StoreInfo, pk=store_id)
-
-#     #トグル機能(createがTrueであればLikeオブジェクトが作成される。likeにLikeオブジェクト、createdにTrue or Falseが入る。True:オブジェクトが新たに作成された/False:すでに存在しているアンパッキングの書き方。)
-#     like, created = Like.objects.get_or_create(user=request.user, fav=store)
-
-#     if not created:
-#         #すでにnot created=not True= False=すでにオブジェクトが作成済みの場合
-#         like.delete()
-    
-#     print("チェック",store_id)
-    
-#     return redirect('gourmet:detail', pk=store_id)
-
-
 #新お気に入り機能(非同期処理)
 @login_required
 def toggle_favorite(request, store_id):
@@ -639,3 +623,56 @@ class MypageDeleteView(LoginRequiredMixin,generic.DeleteView):
         return super().form_invalid(form)
     
 
+#行きたいとこリスト
+class WantView(generic.ListView):
+    model = WantPlace
+    template_name = 'want_list.html'
+    context_object_name = 'wantplaces'
+
+
+#行きたいところリストのフォーム
+class WantFormView(LoginRequiredMixin, generic.FormView):
+    template_name = 'want_list_form.html'  
+    form_class = WantPlaceForm
+    success_url = reverse_lazy('gourmet:want_list')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user  # ユーザー情報を追加
+        form.save()  # フォームを保存
+        messages.success(self.request, "行きたいとこリストに追加しました。")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
+#行きたいとこリスト(編集)
+class WantUpdateView(LoginRequiredMixin,UpdateView):
+    model = WantPlace
+    template_name = 'want_list_edit.html'
+    form_class =  WantPlaceForm
+    success_url = reverse_lazy('gourmet:want_list')
+    context_object_name = 'wantplaces'
+
+    def form_valid(self,form):
+        messages.success(self.request,'行きたいとこリストを更新しました。')
+        return super().form_valid(form)
+    
+    def form_invalid(self,form):
+        messages.error(self.request,'行きたいとこリストの更新に失敗しました。')
+        return super().form_invalid(form)
+
+#行きたいとこリスト削除
+class WantDeleteView(LoginRequiredMixin,generic.DeleteView):
+    model = WantPlace
+    success_url = reverse_lazy('gourmet:want_list')
+    context_object_name = 'wantplaces'
+    template_name = 'want_list_delete.html'
+
+
+    def form_valid(self,form):
+        messages.success(self.request,"行きたいところリストから削除しました。")
+        return super().form_valid(form)
+    
+    def form_invalid(self,form):
+        messages.error(self.request,'行きたいとこリストの削除に失敗しました。')
+        return super().form_invalid(form)

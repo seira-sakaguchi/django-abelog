@@ -2,7 +2,7 @@ from django import forms
 from django.forms import PasswordInput  
 
 from  accounts.models import CustomUser #accounts.models.pyのクラスを継承する。
-from .models import Reservation,Review,Member,Mypage
+from .models import Reservation,Review,Member,Mypage,WantPlace
 
 #ユーザー情報
 class ProfileForm(forms.ModelForm):
@@ -91,6 +91,20 @@ class MypageForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control' 
             field.widget.attrs['style']='text-align:left'
         self.fields['feeling'].widget.attrs['placeholder']='最大70文字'
+
+#行きたいとこリストフォーム
+class WantPlaceForm(forms.ModelForm):
+    class Meta:
+        model = WantPlace
+        fields = ['store_name','web_site','comment']
+
+    def __init__(self,*args,**kwargs):  
+        super().__init__(*args,**kwargs)
+        for field in self.fields.values(): #selfはインスタンス化されたクラス自身
+            field.widget.attrs['class'] = 'form-control' 
+            field.widget.attrs['style']='text-align:left'
+
+
 
 
 

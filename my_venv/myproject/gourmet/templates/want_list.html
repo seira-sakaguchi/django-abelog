@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}あべろぐ | 行きたいとこリスト{% endblock %}
+
+{% block active-effe3 %}active{% endblock %}
+
+{% block contents %}
+<div class="a_detail">
+    <div class="store-h1">
+        <h1>行きたいとこリスト</h1>
+    </div>
+    <hr class="hr1 mb-5">
+
+    <a href="{% url 'gourmet:want_list_form' %}" class="btn btn-outline-dark" type="submit">行きたいとこリストに登録する</a>
+
+    <table class="table mt-5">
+        <thead>
+            <tr>
+                <th scope="col" style="font-size: 12px;">行った！</th>
+                <th scope="col" style="font-size: 12px;">リピあり！</th>
+                <th scope="col">店名</th>
+                <th scope="col" class="text-center">一言コメント</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+
+
+            </tr>
+        </thead>
+        {% for want in wantplaces %}
+        <tbody>
+            <td class="text-start"><input type="checkbox" class="checkbox" id="scales" name="scales"></td>
+            <td class="text-start"><input type="checkbox" class="checkbox2" id="scales2" name="scales2"></td>
+            <td scope="row" class="text-start" style="width: 80px;"><u><a href="{{want.web_site}}">{{want.store_name}}</a></u></td>
+            <td class="text-start">{{want.comment}}</td>
+            <td class="icon-cell"></td>
+            <td class="icon-cell2"></td>
+            <td><a href="{% url 'gourmet:want_edit' pk=want.pk %}"><i class="fa-solid fa-pen" style="color: rgb(199, 72, 72);font-size: 20px !important;"></i></a></td>
+            <td><a href="{% url 'gourmet:want_delete' pk=want.pk %}"><i class="fa-solid fa-trash" style="color: gray;font-size: 20px !important;"></i> </a></td>
+        </tbody>
+        {% empty %}
+        <p class="mt-5">行きたいとこリストはありません。</p>
+        {% endfor %}
+    </table>
+
+    
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.checkbox');
+    
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const row = this.closest('tr'); //このチェックボックスの最も近い親 tr要素を取得
+                const iconCell = row.querySelector('.icon-cell');
+    
+                if (this.checked) {
+                    iconCell.innerHTML = '<i class="fa-solid fa-face-grin" style="font-size:30px;color:orange;"></i>'; 
+                } else {
+                    iconCell.innerHTML = ''; // チェックが外れたらアイコンを削除
+                }
+            });
+        });
+
+
+        const checkboxes2 = document.querySelectorAll('.checkbox2');
+    
+        checkboxes2.forEach(checkbox2 => {
+        checkbox2.addEventListener('change', function() {
+            const row2 = this.closest('tr');
+            const iconCell2 = row2.querySelector('.icon-cell2');
+
+            if (this.checked) {
+                iconCell2.innerHTML = '<i class="fa-solid fa-face-grin" style="font-size:30px;color:red;"></i>'; 
+            } else {
+                iconCell2.innerHTML = ''; // チェックが外れたらアイコンを削除
+            }
+        });
+    });
+
+
+    });
+</script>
+
+{% endblock %}
+
+
+
