@@ -159,7 +159,7 @@ ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
 #デフォルトのメール送信元を設定
 # DEFAULT_FROM_EMAIL = os.environ.get('FROM_EMAIL')
 
-
+#Eメール(会員登録時)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
