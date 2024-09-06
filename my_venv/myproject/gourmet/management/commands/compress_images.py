@@ -40,10 +40,13 @@ class Command(BaseCommand):
                 # 各 StoreInfo インスタンスの画像フィールドを上書き
                 for storeinfo in StoreInfo.objects.all():
                     if storeinfo.photo1.name == os.path.basename(file_path):
+                        storeinfo.photo1.delete(save=False)  # 古いファイルを削除
                         storeinfo.photo1.save(django_file.name, django_file, save=True)
                     elif storeinfo.photo2.name == os.path.basename(file_path):
+                        storeinfo.photo2.delete(save=False)  # 古いファイルを削除
                         storeinfo.photo2.save(django_file.name, django_file, save=True)
                     elif storeinfo.photo3.name == os.path.basename(file_path):
+                        storeinfo.photo3.delete(save=False)  # 古いファイルを削除
                         storeinfo.photo3.save(django_file.name, django_file, save=True)
             
             self.stdout.write(self.style.SUCCESS(f'Compressed and saved as {compressed_file_path}'))
