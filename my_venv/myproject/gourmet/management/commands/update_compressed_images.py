@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.core.files.base import ContentFile
 from gourmet.models import StoreInfo
-from image_utils import compress_image
+from myproject.gourmet.utils.image_utils import compress_image
 
 class Command(BaseCommand):
     help = '圧縮画像を保存し、古い画像を削除します。'
