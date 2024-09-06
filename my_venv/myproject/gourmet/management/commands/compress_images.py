@@ -19,6 +19,11 @@ class Command(BaseCommand):
 
     def compress_images(self, file_path):
         # 圧縮済みのマーカーを付けた新しいファイルパスを作成
+        if '_compressed' in os.path.basename(file_path):
+            # 圧縮済みのファイルはスキップ
+            self.stdout.write(self.style.SUCCESS(f'Skipping already compressed file {file_path}'))
+            return
+        
         compressed_file_path = f"{os.path.splitext(file_path)[0]}_compressed{os.path.splitext(file_path)[1]}"
         
         try:
