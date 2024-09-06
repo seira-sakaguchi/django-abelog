@@ -37,7 +37,6 @@ class Command(BaseCommand):
             with open(compressed_file_path, 'rb') as f:
                 django_file = File(f, name=os.path.basename(compressed_file_path))
                 
-                # 各 StoreInfo インスタンスの画像フィールドを上書き
                 for storeinfo in StoreInfo.objects.all():
                     if storeinfo.photo1.name == os.path.basename(file_path):
                         storeinfo.photo1.delete(save=False)  # 古いファイルを削除
