@@ -19,12 +19,17 @@ class Command(BaseCommand):
             if '_compressed' in image_field.name:
                 continue
             
-            compressed_image = compress_image(image_field)
+            try:
+                compressed_image = compress_image(image_field)
+            except FileNotFoundError:
+                self.stdout.write(self.style.WARNING(f'File not found for {field} in store: {storeinfo_instance.store_name}'))
+                continue
+
             compressed_file = ContentFile(compressed_image.getvalue(), name=f"{image_field.name}_compressed.jpg")
-            
+
             compressed_field_name = f"{field}_compressed"
             compressed_field = getattr(storeinfo_instance, compressed_field_name)
             compressed_field.save(compressed_file.name, compressed_file, save=True)
-            
+
             # 古い画像ファイルを削除
             image_field.delete(save=False)
