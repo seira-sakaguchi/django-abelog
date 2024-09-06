@@ -1,14 +1,11 @@
-from django.core.files import File
-from PIL import Image
+from PIL import Image, ImageOps
 import io
-from typing import BinaryIO
 
-def save_compressed_image(original_image, original_filename):
+def compress_image(file):
     # 圧縮処理
-    image = Image.open(original_image)
+    image = Image.open(file)
     buffer = io.BytesIO()
-    compressed_filename = f"{original_filename}_compressed.jpg"
     image.save(buffer, format='JPEG', quality=85)  # 例としてJPEG形式に圧縮
-    buffer.seek(0)
-    new_image = File(buffer, name=compressed_filename)
-    return new_image
+
+    buffer.seek(0)  # バッファのポインタを先頭に戻す
+    return buffer
