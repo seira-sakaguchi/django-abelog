@@ -32,5 +32,5 @@ class Command(BaseCommand):
             img.save(compressed_file_path, optimize=True, quality=85)
             self.stdout.write(self.style.SUCCESS(f'Compressed and saved as {compressed_file_path}'))
 
-        # 元のファイルを削除する場合は以下をコメント解除
-        # os.remove(file_path)
+        #元のファイルを削除する場合は以下をコメント解除
+        os.remove(file_path)
