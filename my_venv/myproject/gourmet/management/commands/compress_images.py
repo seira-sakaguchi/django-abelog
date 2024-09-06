@@ -1,7 +1,9 @@
-from PIL import Image, ImageOps
 from django.core.management.base import BaseCommand
 from django.conf import settings
 import os
+from PIL import Image
+import io
+from gourmet.utils.image_utils import save_compressed_image
 
 class Command(BaseCommand):
     help = 'メディアディレクトリ内の画像を全部85%に圧縮'
@@ -27,11 +29,15 @@ class Command(BaseCommand):
         compressed_file_path = f"{os.path.splitext(file_path)[0]}_compressed{os.path.splitext(file_path)[1]}"
         
         try:
-            with Image.open(file_path) as img:
-                if img.mode in ("RGBA", "P"):
-                    img = img.convert("RGB")
-                img = ImageOps.exif_transpose(img)  # Exifデータに基づいて画像を回転
-                img.save(compressed_file_path, optimize=True, quality=85)
+            with open(file_path, 'rb') as f:
+                original_image = f.read()
+                original_filename = os.path.splitext(os.path.basename(file_path))[0]
+                compressed_image = save_compressed_image(io.BytesIO(original_image), original_filename)
+                
+                # 圧縮済み画像をディスクに保存
+                with open(compressed_file_path, 'wb') as f:
+                    f.write(compressed_image.read())
+                
                 self.stdout.write(self.style.SUCCESS(f'Compressed and saved as {compressed_file_path}'))
         
             # 元のファイルを削除する場合は以下の行のコメントを解除
