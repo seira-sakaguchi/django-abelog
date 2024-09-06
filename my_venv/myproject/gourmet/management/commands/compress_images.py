@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.conf import settings
 import os
-from PIL import Image
+from PIL import Image,ImageOps
 import io
 from ...utils.image_utils import save_compressed_image
 
@@ -25,22 +25,15 @@ class Command(BaseCommand):
         return '_compressed' in file_path
 
     def compress_image(self, file_path):
-        # 圧縮済みのマーカーを付けた新しいファイルパスを作成
-        compressed_file_path = f"{os.path.splitext(file_path)[0]}_compressed{os.path.splitext(file_path)[1]}"
-        
+        # 元のファイルパスを使用して圧縮画像を保存
         try:
-            with open(file_path, 'rb') as f:
-                original_image = f.read()
-                original_filename = os.path.splitext(os.path.basename(file_path))[0]
-                compressed_image = save_compressed_image(io.BytesIO(original_image), original_filename)
-                
-                # 圧縮済み画像をディスクに保存
-                with open(compressed_file_path, 'wb') as f:
-                    f.write(compressed_image.read())
-                
-                self.stdout.write(self.style.SUCCESS(f'Compressed and saved as {compressed_file_path}'))
+            with Image.open(file_path) as img:
+                if img.mode in ("RGBA", "P"):
+                    img = img.convert("RGB")
+                img = ImageOps.exif_transpose(img)  # Exifデータに基づいて画像を回転
+                img.save(file_path, optimize=True, quality=85)  # 元のファイルを上書き
+                self.stdout.write(self.style.SUCCESS(f'Compressed and saved as {file_path}'))
         
-            # 元のファイルを削除する場合は以下の行のコメントを解除
-            # os.remove(file_path)
+            # 圧縮画像ファイルの URL を更新する処理が必要な場合はここで行う
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'Error processing {file_path}: {str(e)}'))
