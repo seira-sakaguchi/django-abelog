@@ -75,7 +75,7 @@
               <div class="slide-media img-cover">
                 {% if storeinfo.photo1 %} <!--写真がアップロードされている時とされていない時で場合分けする必要がある。-->
                     <img src="{{ storeinfo.photo1_compressed.url }}" alt="">
-                    <p>{{ storeinfo.photo1_compressed.url }}</p>
+                    <p>テスト{{ storeinfo.photo1_compressed.url }}</p>
                 {% else %}
                     <img src="{% static 'media/noImage.png' %}" alt="No Image">
                 {% endif %}
