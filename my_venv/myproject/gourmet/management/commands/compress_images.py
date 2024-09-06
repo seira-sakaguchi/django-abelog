@@ -3,7 +3,7 @@ from django.conf import settings
 import os
 from PIL import Image
 import io
-from myproject.gourmet.utils.image_utils import save_compressed_image
+from ..utils.image_utils import save_compressed_image
 
 class Command(BaseCommand):
     help = 'メディアディレクトリ内の画像を全部85%に圧縮'
