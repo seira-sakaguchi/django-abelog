@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageOps
 from django.core.management.base import BaseCommand
 from django.conf import settings
 import os
@@ -26,11 +26,15 @@ class Command(BaseCommand):
         # 圧縮済みのマーカーを付けた新しいファイルパスを作成
         compressed_file_path = f"{os.path.splitext(file_path)[0]}_compressed{os.path.splitext(file_path)[1]}"
         
-        with Image.open(file_path) as img:
-            if img.mode in ("RGBA", "P"):
-                img = img.convert("RGB")
-            img.save(compressed_file_path, optimize=True, quality=85)
-            self.stdout.write(self.style.SUCCESS(f'Compressed and saved as {compressed_file_path}'))
-
-        #元のファイルを削除する場合は以下をコメント解除
-        os.remove(file_path)
+        try:
+            with Image.open(file_path) as img:
+                if img.mode in ("RGBA", "P"):
+                    img = img.convert("RGB")
+                img = ImageOps.exif_transpose(img)  # Exifデータに基づいて画像を回転
+                img.save(compressed_file_path, optimize=True, quality=85)
+                self.stdout.write(self.style.SUCCESS(f'Compressed and saved as {compressed_file_path}'))
+        
+            # 元のファイルを削除する場合は以下の行のコメントを解除
+            # os.remove(file_path)
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f'Error processing {file_path}: {str(e)}'))
