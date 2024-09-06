@@ -15,7 +15,7 @@ from django.db import IntegrityError
 import random
 import logging
 import datetime
-from datetime import datetime
+from datetime import datetime as dt
 from django.views.decorators.csrf import csrf_exempt
 logger = logging.getLogger(__name__)
 
@@ -264,7 +264,7 @@ class ConfirmReservation(LoginRequiredMixin,View): #Viewクラスを継承する
         if 'form_date' in self.request.session:
             date = self.request.session.get('form_date')
             # 日付形式を変換
-            date = datetime.strptime(date, '%Y-%m-%d').strftime('%Y年%m月%d日')
+            date = dt.strptime(date, '%Y-%m-%d').strftime('%Y年%m月%d日')
         if 'form_time' in self.request.session:
             time = self.request.session.get('form_time')
         if 'form_persons' in self.request.session:
