@@ -9,7 +9,7 @@ __pycache__/
 #sqlite3無視
 db.sqlite3
 
-migrations/
+accounts/migrations/
 
 dev_dump.sql
 
