@@ -10,6 +10,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         media_root = settings.MEDIA_ROOT
+        print("check!!!!!")
+        print(media_root)
         for root, dirs, files in os.walk(media_root):
             for file in files:
                 if file.lower().endswith(('.png', '.jpg', '.jpeg')):
