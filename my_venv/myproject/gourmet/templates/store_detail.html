@@ -239,7 +239,7 @@
       {% endif %}
       {% if review.photo3_compressed %}
       <a href="{{ review.photo3_compressed.url }}" data-lightbox="review-{{ review.id }}" data-title="1枚目"><img src="{{ review.photo3_compressed.url }}" style="width: 200px; max-height: 200px; margin-left: 10px;"></a>
-      {% elif review.review_photo1 %}
+      {% elif review.review_photo3 %}
       <a href="{{ review.review_photo3.url }}" data-lightbox="review-{{ review.id }}" data-title="2枚目"><img src="{{ review.review_photo3.url }}" style="width: 200px; max-height: 200px; margin-left: 10px;"></a>
       {% endif %}
     </div>
