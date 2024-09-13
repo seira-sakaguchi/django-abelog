@@ -130,17 +130,29 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="swiper-wrapper">
                             {% if mypage.photo1 %}
                             <div class="swiper-slide">
+                                {% if mypage.photo1_mycompressed %}
+                                <img src="{{ mypage.photo1_mycompressed.url }}" class="card-img-top">
+                                {% else %}
                                 <img src="{{ mypage.photo1.url }}" class="card-img-top">
+                                {% endif %}
                             </div>
                             {% endif %}
                             {% if mypage.photo2 %}
                             <div class="swiper-slide">
+                                {% if mypage.photo2_mycompressed %}
+                                <img src="{{ mypage.photo2_mycompressed.url }}" class="card-img-top">
+                                {% else %}
                                 <img src="{{ mypage.photo2.url }}" class="card-img-top">
+                                {% endif %}
                             </div>
                             {% endif %}
                             {% if mypage.photo3 %}
                             <div class="swiper-slide">
+                                {% if mypage.photo3_mycompressed %}
+                                <img src="{{ mypage.photo3_mycompressed.url }}" class="card-img-top">
+                                {% else %}
                                 <img src="{{ mypage.photo3.url }}" class="card-img-top">
+                                {% endif %}
                             </div>
                             {% endif %}
                         </div>
