@@ -23,7 +23,13 @@
                             <div class="cardtype row g-0">
                             <!--画像(開始)-->
                             <div class="card-photo col-md-4">
+                                {% if storeinfo.photo1_compressed %}
+                                <img src="{{ storeinfo.photo1_compressed.url }}" class="img-fluid rounded-start" >
+                                {% elif storeinfo.photo1 %}
                                 <img src="{{ storeinfo.photo1.url }}" class="img-fluid rounded-start" >
+                                {% else %}
+                                <img src="{% static 'images/noImage.png' %}" alt="No Image">
+                                {% endif %}
                             <!--画像(終了)-->
                             </div>
                             <!--店舗説明(開始)-->
