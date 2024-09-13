@@ -85,17 +85,23 @@
         <div class="swiper" id="loop" style="margin-top: 50px;">
           <div class="swiper-wrapper">
             <div class="swiper-slide">
-              {% if object.photo1 %}
+              {% if object.photo1_compressed %}
+                <img src="{{ object.photo1_compressed.url }}" alt="Photo 1">
+              {% elif object.photo1 %}
                 <img src="{{ object.photo1.url }}" alt="Photo 1">
               {% endif %}
             </div>
             <div class="swiper-slide">
-              {% if object.photo2 %}
+              {% if object.photo2_compressed %}
+                <img src="{{ object.photo2_compressed.url }}" alt="Photo 2">
+              {% elif object.photo2 %}
                 <img src="{{ object.photo2.url }}" alt="Photo 2">
               {% endif %}
             </div>
             <div class="swiper-slide">
-              {% if object.photo3 %}
+              {% if object.photo3_compressed %}
+                <img src="{{ object.photo3_compressed.url }}" alt="Photo 3">
+              {% elif object.photo3 %}
                 <img src="{{ object.photo3.url }}" alt="Photo 3">
               {% endif %}
             </div>
