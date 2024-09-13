@@ -55,8 +55,7 @@ class Command(BaseCommand):
                     elif mypage.photo3.name == os.path.basename(file_path):
                         mypage.photo3_mycompressed.delete(save=False)
                         mypage.photo3_mycompressed.save(django_file.name, django_file, save=True)
-                        
-                self.stdout.write(f"Review photo: {review.review_photo1.name}, File: {os.path.basename(file_path)}")
+
                 for review in Review.objects.all():
                     if review.review_photo1.name == os.path.basename(file_path):
                         review.photo1_compressed.delete(save=False)
@@ -67,6 +66,8 @@ class Command(BaseCommand):
                     elif review.review_photo3.name == os.path.basename(file_path):
                         review.photo3_compressed.delete(save=False)
                         review.photo3_compressed.save(django_file.name, django_file, save=True)
+                self.stdout.write(f"Review photo: {review.review_photo1.name}, File: {os.path.basename(file_path)}")
+
             
             self.stdout.write(self.style.SUCCESS(f'Compressed and saved as {compressed_file_path}'))
         
