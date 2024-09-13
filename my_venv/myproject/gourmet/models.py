@@ -57,10 +57,6 @@ class StoreInfo(models.Model):
     create_at = models.DateTimeField(verbose_name='作成日時',auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日時',auto_now=True)
 
-     # 圧縮フィールドを追加
-    photo1_compressed = models.ImageField(blank=True, null=True)
-    photo2_compressed = models.ImageField(blank=True, null=True)
-    photo3_compressed = models.ImageField(blank=True, null=True)
 
     #定休日追加
     holiday_choices = [
