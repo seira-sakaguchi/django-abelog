@@ -35,6 +35,8 @@ class Command(BaseCommand):
             with open(compressed_file_path, 'rb') as f:
                 django_file = File(f, name=os.path.basename(compressed_file_path))
                 
+
+                #ここを変える
                 for storeinfo in StoreInfo.objects.all():
                     if storeinfo.photo1.name == os.path.basename(file_path):
                         storeinfo.photo1_compressed.delete(save=False)
