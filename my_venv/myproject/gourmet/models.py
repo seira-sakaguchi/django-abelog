@@ -57,7 +57,7 @@ class StoreInfo(models.Model):
     create_at = models.DateTimeField(verbose_name='作成日時',auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日時',auto_now=True)
 
-     # 新しいフィールドを追加
+     # 圧縮フィールドを追加
     photo1_compressed = models.ImageField(blank=True, null=True)
     photo2_compressed = models.ImageField(blank=True, null=True)
     photo3_compressed = models.ImageField(blank=True, null=True)
@@ -189,6 +189,11 @@ class Mypage(models.Model):
     photo3 = models.ImageField(verbose_name='写真3',blank=True)
     create_at = models.DateTimeField(verbose_name='作成日時',auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日時',auto_now=True)
+
+     # 圧縮フィールドを追加
+    photo1_compressed = models.ImageField(blank=True, null=True)
+    photo2_compressed = models.ImageField(blank=True, null=True)
+    photo3_compressed = models.ImageField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'マイページ'
