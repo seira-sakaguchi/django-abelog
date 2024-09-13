@@ -75,7 +75,8 @@
               <div class="slide-media img-cover">
                 {% if storeinfo.photo1_compressed %} <!--写真がアップロードされている時とされていない時で場合分けする必要がある。-->
                     <img src="{{ storeinfo.photo1_compressed.url }}" alt="">
-                    <p>テスト{{ storeinfo.photo1_compressed.url }}</p>
+                {% elif storeinfo.photo1 %}
+                    <img src="{{ storeinfo.photo1.url }}" alt="">
                 {% else %}
                     <img src="{% static 'images/noImage.png' %}" alt="No Image">
                 {% endif %}
@@ -146,9 +147,11 @@
             <article class="slide">
               <div class="slide-media img-cover">
                 {% if object.photo1 %} <!--写真がアップロードされている時とされていない時で場合分けする必要がある。-->
-                    <img src="{{ object.photo1.url }}" alt="">
+                    <img src="{{ object.photo1_compressed.url }}" alt="">
+                {% elif storeinfo.photo1 %}
+                    <img src="{{ storeinfo.photo1.url }}" alt="">
                 {% else %}
-                    <img src="{% static 'media/noImage.png' %}" alt="No Image">
+                    <img src="{% static 'images/noImage.png' %}" alt="No Image">
                 {% endif %}
               </div>
               <div class="slide-content">
