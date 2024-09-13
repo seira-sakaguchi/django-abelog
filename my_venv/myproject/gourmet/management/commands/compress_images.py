@@ -57,16 +57,16 @@ class Command(BaseCommand):
                         mypage.photo3_mycompressed.save(django_file.name, django_file, save=True)
 
                 for review in Review.objects.all():
-                    if review.review_photo1.name == os.path.basename(file_path):
+                    if os.path.basename(review.review_photo1.name) == os.path.basename(file_path):
                         review.photo1_compressed.delete(save=False)
                         review.photo1_compressed.save(django_file.name, django_file, save=True)
-                    elif review.review_photo2.name == os.path.basename(file_path):
+                    elif os.path.basename(review.review_photo2.name) == os.path.basename(file_path):
                         review.photo2_compressed.delete(save=False)
                         review.photo2_compressed.save(django_file.name, django_file, save=True)
-                    elif review.review_photo3.name == os.path.basename(file_path):
+                    elif os.path.basename(review.review_photo3.name) == os.path.basename(file_path):
                         review.photo3_compressed.delete(save=False)
                         review.photo3_compressed.save(django_file.name, django_file, save=True)
-                self.stdout.write(f"Review photo: {review.review_photo1.name}, File: {os.path.basename(file_path)}")
+                self.stdout.write(f"Review photo: {os.path.basename(review.review_photo3.name)}, File: {os.path.basename(file_path)}")
 
             
             self.stdout.write(self.style.SUCCESS(f'Compressed and saved as {compressed_file_path}'))
