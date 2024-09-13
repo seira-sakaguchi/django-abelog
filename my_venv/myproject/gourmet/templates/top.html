@@ -149,7 +149,7 @@
                 {% if object.photo1 %} <!--写真がアップロードされている時とされていない時で場合分けする必要がある。-->
                     <img src="{{ object.photo1_compressed.url }}" alt="">
                 {% elif storeinfo.photo1 %}
-                    <img src="{{ storeinfo.photo1.url }}" alt="">
+                    <img src="{{ object.photo1.url }}" alt="">
                 {% else %}
                     <img src="{% static 'images/noImage.png' %}" alt="No Image">
                 {% endif %}
