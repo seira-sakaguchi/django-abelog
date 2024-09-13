@@ -114,6 +114,12 @@ class Review(models.Model):
     review_photo2 = models.ImageField(verbose_name='レビュー写真2',upload_to='reviews/',blank=True)
     review_photo3 = models.ImageField(verbose_name='レビュー写真3',upload_to='reviews/',blank=True)
 
+    #圧縮フィールドを追加
+    photo1_compressed = models.ImageField(blank=True, null=True)
+    photo2_compressed = models.ImageField(blank=True, null=True)
+    photo3_compressed = models.ImageField(blank=True, null=True)
+
+
     def __str__(self):
         return self.user.username
     
