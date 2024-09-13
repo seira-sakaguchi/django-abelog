@@ -3,7 +3,7 @@ from django.core.files import File
 from django.core.management.base import BaseCommand
 from django.conf import settings
 import os
-from gourmet.models import StoreInfo,Mypage
+from gourmet.models import StoreInfo,Mypage,Review
 
 class Command(BaseCommand):
     help = 'メディアディレクトリ内の画像を全て85%に圧縮し、photo1_compressed、photo2_compressed、photo3_compressed フィールドに上書き保存'
@@ -55,6 +55,17 @@ class Command(BaseCommand):
                     elif mypage.photo3.name == os.path.basename(file_path):
                         mypage.photo3_mycompressed.delete(save=False)
                         mypage.photo3_mycompressed.save(django_file.name, django_file, save=True)
+
+                for review in Review.objects.all():
+                    if review.review_photo1.name == os.path.basename(file_path):
+                        review.photo1_compressed.delete(save=False)
+                        review.photo1_compressed.save(django_file.name, django_file, save=True)
+                    elif review.review_photo2.name == os.path.basename(file_path):
+                        review.photo2_compressed.delete(save=False)
+                        review.photo2_compressed.save(django_file.name, django_file, save=True)
+                    elif review.review_photo3.name == os.path.basename(file_path):
+                        review.photo3_compressed.delete(save=False)
+                        review.photo3_compressed.save(django_file.name, django_file, save=True)
             
             self.stdout.write(self.style.SUCCESS(f'Compressed and saved as {compressed_file_path}'))
         
