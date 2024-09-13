@@ -191,9 +191,9 @@ class Mypage(models.Model):
     updated_at = models.DateTimeField(verbose_name='更新日時',auto_now=True)
 
      # 圧縮フィールドを追加
-    photo1_compressed = models.ImageField(blank=True, null=True)
-    photo2_compressed = models.ImageField(blank=True, null=True)
-    photo3_compressed = models.ImageField(blank=True, null=True)
+    photo1_mycompressed = models.ImageField(blank=True, null=True)
+    photo2_mycompressed = models.ImageField(blank=True, null=True)
+    photo3_mycompressed = models.ImageField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'マイページ'
