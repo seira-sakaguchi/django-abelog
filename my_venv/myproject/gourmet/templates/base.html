@@ -55,7 +55,7 @@
                     <li class="nav-items__item" id="menu__item">
                       <a href="{% url 'gourmet:profile' %}" class="menu__link nav-active {% block active-effe3 %}{% endblock %}">こんにちは{{ user.username }}さん<i class="fa-solid fa-chevron-down"></i></a>
                       <ul class="drop-menu">
-                        <li class="drop-menu__item"><a href="{% url 'gourmet:mypage' %}" class="drop-menu__link">ほかろぐ</a></li>
+                        <!-- <li class="drop-menu__item"><a href="{% url 'gourmet:mypage' %}" class="drop-menu__link">ほかろぐ</a></li> -->
                         <li class="drop-menu__item"><a href="{% url 'gourmet:profile' %}" class="drop-menu__link">ユーザー情報</a></li>
 
                         <!--コンテキストプロセッサでis_memberのTrue/Falseを定義-->
@@ -64,7 +64,7 @@
                         {% else %}
                         <li class="drop-menu__item"><a href="{% url 'gourmet:membership' %}" class="drop-menu__link">有料会員登録</a></li>
                         {% endif %}
-                        <li class="drop-menu__item"><a href="{% url 'gourmet:want_list' %}" class="drop-menu__link" style="font-size: 13px;">行きたいとこリスト</a></li> 
+                        <!-- <li class="drop-menu__item"><a href="{% url 'gourmet:want_list' %}" class="drop-menu__link" style="font-size: 13px;">行きたいとこリスト</a></li>  -->
                         <li class="drop-menu__item"><a href="{% url 'admin:index' %}" class="drop-menu__link">管理画面</a></li> <!--admin:indexはデフォルトのURL名前空間-->
 
                       </ul>

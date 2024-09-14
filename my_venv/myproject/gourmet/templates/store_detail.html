@@ -115,7 +115,7 @@
         <div class="fav col-md-9 mt-3">
           <form id="fav-form" method="post" action="{% url 'gourmet:toggle_favorite' store_id=storeinfo.pk %}">
             {% csrf_token %}
-            {% if user.is_authenticated %}
+            {% if is_member %}
             <button type="submit" id="fav-btn">
               {% if storeinfo.id in user_likes %} <!--店舗詳細ページ上ではお気に入りボタンが押されるまではstore.idを取得できない。--><!--user_likesはviewで作成したいいねリスト-->
                 <span id="fav"><i class="fa-solid fa-heart-circle-plus"></i></span>
@@ -124,7 +124,7 @@
             {% endif %}
             </button>
             {% else %}
-            <p>お気に入り登録するには<a href="{% url 'account_login'%}">ログイン</a>してください。</p>
+            <p>お気に入り登録するには<a href="{% url 'gourmet:membership'%}">有料会員登録</a>してください。</p>
             {% endif %}
         
           </form>
@@ -153,13 +153,16 @@
         <!--カレンダーから予約するページ-->
         <section class="section col-md-4 mt-5">
           <div class="section__block section__block--scoped">
-            <h3 style="font-size: 15px; font-weight: bold; margin-bottom: 8px;">予約する</h3>   
-  
+            <h3 style="font-size: 15px; font-weight: bold; margin-bottom: 8px;">予約する</h3>    
             <form method="post">
               {% csrf_token %}
               {{ form.as_p }}
+              {% if is_member %}
               <button type="submit"  id="submit" class="btn btn-success btn-lg mt-4" style="display: flex; justify-content: center; align-items: center;margin: auto;">予約する</button>
-            </form>  
+              {% else %}
+              <p>予約するには<a href="{% url 'gourmet:membership'%}">有料会員登録</a>してください。</p>
+              {% endif %} 
+              </form>  
           </div>
         </div>
     </div>
@@ -192,9 +195,12 @@
           <h1>レビュー一覧</h1>
         </div>
       <hr class="hr1 mb-5">
+      {% if is_member %}
       <a href="{% url 'gourmet:review_form' store_id=object.pk %}" class="btn btn-warning btn-lg">口コミを投稿する</a>
-      
-    {% for review in reviews %}
+      {% else %}
+      <p>レビューを書くには<a href="{% url 'gourmet:membership'%}">有料会員登録</a>を行ってください。</p>
+      {% endif %} 
+      {% for review in reviews %}
     <div class="review-box text-start">
       <div class="review-style" style="display: flex;">
       <strong>{{ review.handle }}</strong> 
