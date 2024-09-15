@@ -41,8 +41,9 @@
                         <td>{{ persons }}名</td>
                     </tr>
                 </table>
-                <form action="#" method="post">
+                <form action="{% url 'gourmet:reservation_mail' %}" method="post">
                     {% csrf_token %}
+                    <input type="hidden" name="store_id" value="{{restaurant_name.id}}">
                     <button type="submit" class="btn btn-warning">確定する</button>
                 </form>
             </div>

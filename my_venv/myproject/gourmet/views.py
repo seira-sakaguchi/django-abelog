@@ -17,6 +17,8 @@ import logging
 import datetime
 from datetime import datetime as dt
 from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
@@ -249,13 +251,35 @@ class StoreDetailView(generic.DetailView):
     #     context['reviews'] = Review.objects.filter(store_name=store).order_by('-create_at')
     #     return context
 
+#新お気に入り機能(非同期処理)
+@login_required
+def toggle_favorite(request, store_id):
+    if request.method == "POST":
+        store = get_object_or_404(StoreInfo, pk=store_id)
+        user = request.user
+
+        #トグル機能(createがTrueであればLikeオブジェクトが作成される。likeにLikeオブジェクト、createdにTrue or Falseが入る。True:オブジェクトが新たに作成された/False:すでに存在しているアンパッキングの書き方。)
+        like, created = Like.objects.get_or_create(user=request.user, fav=store) #Likeモデルの中からuserフィールドが現在のuser(request.user)かつ、favフィールド(いいねされた店舗)が現在閲覧している店舗(store)と一致しているオブジェクトを検索。
+
+        if not created: 
+            #すでにnot created=not True= False=すでにオブジェクトが作成済みの場合
+            like.delete()
+            status = 'removed'
+        else:
+            status = 'added'
+        
+         # いいねのカウントを取得して返す
+        count = Like.objects.filter(fav=store).count()
+        return JsonResponse({'status': status, 'count': count}) #djangoのビューからJSONレスポンスを返す。JsonResponseはpythonの辞書型をJSON形式のHTTPレスポンスに変換している。
+    
 
 #予約確認画面  
 class ConfirmReservation(LoginRequiredMixin,View): #Viewクラスを継承するときは"def post"や"def get"などの関数を使用する。
     model = Reservation
     template_name = 'confirm_reservation.html'
-
+    
     def get(self, request):
+        # storeinfo = get_object_or_404(StoreInfo, pk=store_id)
         context = {}
         date = ''
         time = ''
@@ -274,6 +298,7 @@ class ConfirmReservation(LoginRequiredMixin,View): #Viewクラスを継承する
             restaurant = StoreInfo.objects.get(id=restaurant_id) 
 
         context.update({
+            # 'storeinfo':storeinfo,
             'user': self.request.user,
             'date': date,
             'time': time,
@@ -315,8 +340,49 @@ class ConfirmReservation(LoginRequiredMixin,View): #Viewクラスを継承する
             time=time,
             persons=persons
         )
+
         # 新しく作成された予約のIDを使用してリダイレクト
         return redirect('gourmet:reservation_success', reservation_id=new_reservation.id)
+    
+#予約が入った時に店舗に登録されているメールアドレスにメールを送信
+class ReservationMail(View):
+    def post(self,request):
+        #予約確認画面からのpostリクエストを処理
+        store_id = request.POST.get('store_id')
+        store = get_object_or_404(StoreInfo,pk=store_id)
+        form = ReservationForm(request.POST)
+
+        if form.is_valid():
+            reservation = form.save(commit=False)
+            reservation.store_name = store
+            reservation.save() #予約情報のインスタンス化
+
+            #予約者と予約情報
+            custumer = form.cleaned_data['user']
+            custumer_name = custumer.full_name
+            custumer_email = custumer.email
+            custumer_phone = custumer.phone_number
+            reservation_date = form.cleaned_data['date']
+            reservation_time = form.cleaned_data['time']
+
+            if store.store_email: #店舗メールアドレスが登録されている場合
+                #メールの送信内容
+                subject = f"予約が入りました:{custumer_name}様"
+                message = f"{custumer_name}様が以下の日程で予約しました。\n\n"\
+                        f"予約日:{reservation_date}"\
+                        f"予約時間:{reservation_time}"\
+                        f"連絡先:{custumer_email}"\
+                        f"電話番号{custumer_phone}"
+                
+                #店舗メールアドレスに送信  
+                send_mail(subject,message,settings.DEFAULT_FROM_EMAIL,[store.store_email],fail_silently=False)    
+
+            return redirect('gourmet:reservation_success',reservation_id=reservation.id)
+
+         #form.is_valid()がFalseの時   
+        return render(request,'store_detail.html',{'form':form,'store':store})
+
+
 
 #予約成功時に予約情報を表示するビュー 
 def reservation_success(request,reservation_id):
@@ -326,7 +392,9 @@ def reservation_success(request,reservation_id):
         'reservation':reservation,
         'user':user
     }
+
     return render(request, 'reservation_success.html',context)
+
 
 #予約一覧表示のview
 class ReserveListView(LoginRequiredMixin,generic.ListView):
@@ -348,6 +416,7 @@ class ReserveDeleteView(LoginRequiredMixin,DeleteView):
     def form_valid(self,form):
         messages.success(self.request,"予約をキャンセルしました。")
         return super().form_valid(form)
+
 
     
 #ユーザ情報ページ
@@ -447,26 +516,6 @@ class ReviewDeleteView(LoginRequiredMixin,generic.DeleteView):
         messages.success(self.request,"レビューを削除しました。")
         return super().form_valid(form)
 
-#新お気に入り機能(非同期処理)
-@login_required
-def toggle_favorite(request, store_id):
-    if request.method == "POST":
-        store = get_object_or_404(StoreInfo, pk=store_id)
-        user = request.user
-
-        #トグル機能(createがTrueであればLikeオブジェクトが作成される。likeにLikeオブジェクト、createdにTrue or Falseが入る。True:オブジェクトが新たに作成された/False:すでに存在しているアンパッキングの書き方。)
-        like, created = Like.objects.get_or_create(user=request.user, fav=store) #Likeモデルの中からuserフィールドが現在のuser(request.user)かつ、favフィールド(いいねされた店舗)が現在閲覧している店舗(store)と一致しているオブジェクトを検索。
-
-        if not created: 
-            #すでにnot created=not True= False=すでにオブジェクトが作成済みの場合
-            like.delete()
-            status = 'removed'
-        else:
-            status = 'added'
-        
-         # いいねのカウントを取得して返す
-        count = Like.objects.filter(fav=store).count()
-        return JsonResponse({'status': status, 'count': count}) #djangoのビューからJSONレスポンスを返す。JsonResponseはpythonの辞書型をJSON形式のHTTPレスポンスに変換している。
 
 #お気に入りリスト
 class LikeListView(LoginRequiredMixin,generic.ListView):

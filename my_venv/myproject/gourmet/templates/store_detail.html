@@ -113,7 +113,7 @@
         
         <!--お気に入り機能-->
         <div class="fav col-md-9 mt-3">
-          <form id="fav-form" method="post" action="{% url 'gourmet:toggle_favorite' store_id=storeinfo.pk %}">
+          <form id="fav-form" method="post" action="{% url 'gourmet:toggle_favorite' store_id=storeinfo.id %}">
             {% csrf_token %}
             {% if user.is_authenticated %}
             <button type="submit" id="fav-btn">
@@ -126,7 +126,6 @@
             {% else %}
             <p>お気に入り登録するには<a href="{% url 'account_login'%}">ログイン</a>してください。</p>
             {% endif %}
-        
           </form>
           <span id="like-count">{{ storeinfo.like_set.count }}件のいいねがあります。</span> <!--storeinfoに関連するLikeオブジェクトの数をカウント-->
         </div>
@@ -155,7 +154,7 @@
           <div class="section__block section__block--scoped">
             <h3 style="font-size: 15px; font-weight: bold; margin-bottom: 8px;">予約する</h3>   
   
-            <form method="post">
+            <form method="post" >
               {% csrf_token %}
               {{ form.as_p }}
               <button type="submit"  id="submit" class="btn btn-success btn-lg mt-4" style="display: flex; justify-content: center; align-items: center;margin: auto;">予約する</button>
