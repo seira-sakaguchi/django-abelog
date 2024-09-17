@@ -349,7 +349,6 @@ class ReservationMail(View):
     def post(self,request):
         #予約確認画面からのpostリクエストを処理
         store_id = request.POST.get('store_id')
-        print("check",store_id)
         store = get_object_or_404(StoreInfo,pk=store_id)
 
         date = ''
@@ -374,20 +373,35 @@ class ReservationMail(View):
         
         reservation.save()
 
-        if store.store_email: #店舗メールアドレスが登録されている場合
+        if store.store_email: #店舗メールアドレスが登録されている場合(店舗受信メール)
             #メールの送信内容
-            subject = f"予約が入りました{reservation.user.full_name}:様"
+            subject = f"予約が入りました　{reservation.user.full_name}:様"
             message = f"{reservation.user.full_name}様が以下の日程で予約しました。\n\n"\
-                    f"店名:{reservation.store_name.store_name}"\
-                    f"予約日:{date}"\
-                    f"予約時間:{time}"\
-                    f"連絡先:{reservation.user.address}"\
+                    f"店名:{reservation.store_name.store_name}\n"\
+                    f"予約日:{date}\n"\
+                    f"予約時間:{time}\n"\
+                    f"連絡先:{reservation.user.address}\n"\
                     f"電話番号:{reservation.user.phone_number}"
             
             #店舗メールアドレスに送信  
-            send_mail(subject,message,settings.DEFAULT_FROM_EMAIL,[store.store_email],fail_silently=False)    
+            send_mail(subject,message,settings.DEFAULT_FROM_EMAIL,[store.store_email],fail_silently=False)   
 
-        print("成功")
+        else:
+            messages.warning(request, "店舗のメールアドレスが未登録")
+
+        #ユーザー側受信メール
+        subject = f"ご予約ありがとうございます！　{reservation.user.full_name}:様"
+        message = f"{reservation.store_name}様\n以下の日程で予約しました。\n\n"\
+                f"店名:{reservation.store_name.store_name}\n"\
+                f"予約日:{date}\n"\
+                f"予約時間:{time}\n"\
+                f"店舗連絡先:{reservation.store_name.store_address}\n"\
+                f"店舗電話番号:{reservation.store_name.store_phone_number}"
+        
+        #店舗メールアドレスに送信  
+        send_mail(subject,message,settings.DEFAULT_FROM_EMAIL,[reservation.user.email],fail_silently=False)   
+
+
         return redirect('gourmet:reservation_success',reservation_id=reservation.id)
 
          #form.is_valid()がFalseの時   

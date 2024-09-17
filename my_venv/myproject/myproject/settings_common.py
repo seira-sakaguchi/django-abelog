@@ -166,7 +166,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'abelog1900@gmail.com'
 EMAIL_HOST_PASSWORD = 'inoxjlnwtqdbbmvz'
-DEFAULT_FROM_EMAIL = 'abelog1900@gmail.com'
+DEFAULT_FROM_EMAIL = 'あべろぐ <abelog1900@gmail.com>'
 
 
 LOGGING = {

@@ -52,6 +52,7 @@ class StoreInfo(models.Model):
     store_detail = models.TextField(verbose_name='店舗詳細',blank=True, null=True)
     store_address = models.TextField(verbose_name='店舗住所',blank=True,null=True)
     store_email = models.EmailField(verbose_name='店舗メールアドレス',blank=True,null=True)
+    store_phone_number = models.CharField(verbose_name='店舗電話番号',max_length=13, blank=True,null=True)
     photo1 = models.ImageField(verbose_name='写真1',blank=True,default='noImage.png')
     photo2 = models.ImageField(verbose_name='写真2',blank=True,default='noImage.png')
     photo3 = models.ImageField(verbose_name='写真3',blank=True,default='noImage.png')
