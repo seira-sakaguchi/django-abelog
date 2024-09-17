@@ -169,11 +169,57 @@
   </div>
   
       <script>
-          $(document).ready(function(){
+        $(document).ready(function(){
+            //djangoのテンプレートの定休日を取り出してリストに格納する。
+            const holidays = [
+            '{{ object.holiday|default:"" }}',
+            '{{ object.holiday2|default:"" }}',
+            '{{ object.holiday3|default:"" }}'
+            ].filter(date => date);  // 空の値を取り除く
+            // console.log('Holidays:', holidays);
+
+            // 曜日を数値にマッピング
+            const dayMap = {
+              '日': 0,  
+              '月': 1,  
+              '火': 2,  
+              '水': 3,  
+              '木': 4,  
+              '金': 5,  
+              '土': 6   
+            };
+
+            //mapメソッドを使って曜日を数字に変換(mapはholidays配列の要素)filterでundefinedとなったもの("定休日"などは除外する)
+            const disabledDays = holidays.map(day => dayMap[day]).filter(day => day !== undefined);
+            
+            const today = new Date();
+    
+            // 4ヶ月後の日付を計算
+            const MonthsLater = new Date(today.getFullYear(), today.getMonth() + 4, today.getDate());
+            
+            // 無効化する日曜日の日付を格納する配列
+            const disDates = [];
+
+            // 今日から4ヶ月間の日付をループ
+            for (let d = new Date(today); d <= MonthsLater; d.setDate(d.getDate() + 1)) {
+
+              for(const element of disabledDays){
+                  if (d.getDay() === element) {
+                  disDates.push(new Date(d));
+                  }
+                }
+            }
+
+            console.log('DisDates:', disDates);
+
+
             $('.js__datepicker').pickadate({
               format: 'yyyy-mm-dd',
               formatSubmit: 'yyyy-mm-dd',
-              hiddenName: true
+              hiddenName: true,
+              min:true, //過去の日付を選択できないようにする。
+              max:100, //最大100日先まで予約できるようにする。
+              disable: disDates
             });
         
             $('.js__timepicker').pickatime({
@@ -185,7 +231,9 @@
               max: [20,00]    // 予約終了時間 
             });
           });   
-        </script>
+      </script>
+
+        
   <!--タブのバー1つめ(終了)-->
 
   <!--タブのバー2つめ-->
