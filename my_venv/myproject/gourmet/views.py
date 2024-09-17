@@ -349,38 +349,51 @@ class ReservationMail(View):
     def post(self,request):
         #予約確認画面からのpostリクエストを処理
         store_id = request.POST.get('store_id')
+        print("check",store_id)
         store = get_object_or_404(StoreInfo,pk=store_id)
-        form = ReservationForm(request.POST)
 
-        if form.is_valid():
-            reservation = form.save(commit=False)
-            reservation.store_name = store
-            reservation.save() #予約情報のインスタンス化
+        date = ''
+        time = ''
+        persons =''
 
-            #予約者と予約情報
-            custumer = form.cleaned_data['user']
-            custumer_name = custumer.full_name
-            custumer_email = custumer.email
-            custumer_phone = custumer.phone_number
-            reservation_date = form.cleaned_data['date']
-            reservation_time = form.cleaned_data['time']
+        if 'form_date' in self.request.session:
+            date = self.request.session.get('form_date')
+        if 'form_time' in self.request.session:
+            time = self.request.session.get('form_time')
+        if 'form_persons' in self.request.session:
+            persons = self.request.session.get('form_persons')
 
-            if store.store_email: #店舗メールアドレスが登録されている場合
-                #メールの送信内容
-                subject = f"予約が入りました:{custumer_name}様"
-                message = f"{custumer_name}様が以下の日程で予約しました。\n\n"\
-                        f"予約日:{reservation_date}"\
-                        f"予約時間:{reservation_time}"\
-                        f"連絡先:{custumer_email}"\
-                        f"電話番号{custumer_phone}"
-                
-                #店舗メールアドレスに送信  
-                send_mail(subject,message,settings.DEFAULT_FROM_EMAIL,[store.store_email],fail_silently=False)    
 
-            return redirect('gourmet:reservation_success',reservation_id=reservation.id)
+        reservation = Reservation(
+            user = CustomUser.objects.get(id=self.request.user.id), #外部キーのため。
+            store_name = StoreInfo.objects.get(id=store_id),
+            date = date,
+            time = time,
+            persons = persons
+            )
+        
+        reservation.save()
+
+        if store.store_email: #店舗メールアドレスが登録されている場合
+            #メールの送信内容
+            subject = f"予約が入りました{reservation.user.full_name}:様"
+            message = f"{reservation.user.full_name}様が以下の日程で予約しました。\n\n"\
+                    f"店名:{reservation.store_name.store_name}"\
+                    f"予約日:{date}"\
+                    f"予約時間:{time}"\
+                    f"連絡先:{reservation.user.address}"\
+                    f"電話番号:{reservation.user.phone_number}"
+            
+            #店舗メールアドレスに送信  
+            send_mail(subject,message,settings.DEFAULT_FROM_EMAIL,[store.store_email],fail_silently=False)    
+
+        print("成功")
+        return redirect('gourmet:reservation_success',reservation_id=reservation.id)
 
          #form.is_valid()がFalseの時   
-        return render(request,'store_detail.html',{'form':form,'store':store})
+        # print("失敗")
+        # print(form.errors)
+        # return render(request,'store_detail.html',{'form':form,'store':store,'storeinfo':store,'object':store})
 
 
 
