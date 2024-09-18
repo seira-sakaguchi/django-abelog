@@ -831,6 +831,12 @@ box-shadow: 0 2px 0 #cfc959;
 background-color: #cfc959;
 }
 
+/*予約フォームの曜日テキストを中央揃え*/
+.picker__weekday {
+  text-align: center; /* テキストを中央揃え */
+  vertical-align: middle; /* 垂直方向にも中央揃え */
+}
+
 /*店舗レビューページの星*/
 .star_row .stars span{
 display: flex;               /* 要素をフレックスボックスにする */
