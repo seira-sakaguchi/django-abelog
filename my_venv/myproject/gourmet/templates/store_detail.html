@@ -157,7 +157,7 @@
             <form method="post" >
               {% csrf_token %}
               {{ form.as_p }}
-              <button type="submit"  id="submit" class="btn btn-success btn-lg mt-4" style="display: flex; justify-content: center; align-items: center;margin: auto;">予約する</button>
+              <button type="submit"  id="submit" class="btn btn-success btn-lg mt-4" style="display: flex; justify-content: center; align-items: center;margin: auto;" disabled>予約する</button> <!--予約ボタン選択不可に-->
             </form>  
           </div>
         </div>

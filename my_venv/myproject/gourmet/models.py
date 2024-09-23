@@ -5,6 +5,7 @@ from django.core.validators import RegexValidator
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
+from django.utils import timezone
 
 CustomUser = get_user_model()
 
@@ -101,6 +102,7 @@ class Reservation(models.Model):
     date = models.DateField(verbose_name='予約日')
     time = models.TimeField(verbose_name='予約時間')
     persons = models.IntegerField(verbose_name='予約人数')
+    is_visible = models.BooleanField(verbose_name='来店済み',default=False) #予約完了=True
 
 #レビュー
 class Review(models.Model):
@@ -225,4 +227,17 @@ class WantPlace(models.Model):
 
     def __str__(self):
         return self.store_name
+
+#stripe決済で有料会員かどうかを判定するモデル
+class Stripe_Customer(models.Model):
+    user = models.ForeignKey(CustomUser, verbose_name='ユーザー', on_delete=models.CASCADE)
+    stripeCustomerId = models.CharField(verbose_name='stipe顧客ID', max_length=255)
+    stripeSubscriptionId = models.CharField(verbose_name='stripeサブスクID', max_length=255)
+    regist_date = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name_plural = 'stripeサブスク会員'
+
+    def __str__(self):
+        return self.user.username
 

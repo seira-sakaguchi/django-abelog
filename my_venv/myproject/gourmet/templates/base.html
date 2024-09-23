@@ -62,7 +62,7 @@
                         {% if is_member %}
                         <strong><li class="drop-menu__item"><a href="{% url 'gourmet:membership_page' %}" class="drop-menu__link">有料会員ページへ</a></li></strong>
                         {% else %}
-                        <li class="drop-menu__item"><a href="{% url 'gourmet:membership' %}" class="drop-menu__link">有料会員登録</a></li>
+                        <li class="drop-menu__item"><a href="{% url 'payment:index' %}" class="drop-menu__link">有料会員登録</a></li>
                         {% endif %}
                         <li class="drop-menu__item"><a href="{% url 'gourmet:want_list' %}" class="drop-menu__link" style="font-size: 13px;">行きたいとこリスト</a></li> 
                         <li class="drop-menu__item"><a href="{% url 'admin:index' %}" class="drop-menu__link">管理画面</a></li> <!--admin:indexはデフォルトのURL名前空間-->

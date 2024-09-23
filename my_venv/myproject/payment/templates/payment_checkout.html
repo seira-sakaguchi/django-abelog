@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}あべろぐ | *******{% endblock %}
+{% block head %}
+<script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
+<script src="https://js.stripe.com/v3/"></script>
+{% endblock %}
+
+{% block contents %}
+<section style="margin-left:500px;">
+    <div class="product">
+      <div class="description">
+        <h3 class="fs-5">skilla t-shirt</h3>
+        <h5>2,000円</h5>
+      </div>
+    </div>
+    <button type="button" id="checkout-button">Checkout</button>
+</section>
+
+<script type="text/javascript">
+    // Create an instance of the Stripe object with your publishable API key
+    var stripe = Stripe("pk_test_51Q11x3RwNoxwqPY3pyrduFZJqFQ829E73chC8IBdpDiUfoo5wEYbzjudV9g64kd2LOLVCmWVFUx94sE2IAm14xnT00Pu1xacZK");
+    var checkoutButton = document.getElementById("checkout-button");
+ 
+    checkoutButton.addEventListener("click", function () {
+      fetch("/payment/create_checkout_session/", {
+        method: "POST", 
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=UTF-8',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+      })
+
+ 
+        .then(function (response) {
+            console.log("check",response)
+          return response.json(); /*jason形式でバックエンドから送られてきたデータをjavascriptのオブジェクト型に変換*/
+        })
+        .then(function (session) {
+            console.log("check3",session)
+          return stripe.redirectToCheckout({ sessionId: session.id });
+        })
+        .then(function (result) {
+            console.log("check4",result)
+          // If redirectToCheckout fails due to a browser or network
+          // error, you should display the localized error message to your
+          // customer using error.message.
+          if (result.error) {
+            alert(result.error.message);
+          }
+        })
+        .catch(function (error) {
+          console.error("Error:", error);
+        });
+    });
+</script>
+{% endblock %}

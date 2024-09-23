@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views import generic,View
 from django.views.generic import UpdateView, ListView,DeleteView,DetailView,TemplateView
-from .models import StoreInfo,Reservation,Review,Like,Category,Member,Mypage,WantPlace
+from .models import StoreInfo,Reservation,Review,Like,Category,Member,Mypage,WantPlace,Stripe_Customer
 from accounts.models import CustomUser
 from .forms import ProfileForm,ReservationForm,ReviewForm,MemberForm,MypageForm,WantPlaceForm
 from django.urls import reverse_lazy,reverse 
@@ -432,7 +432,7 @@ class ReserveListView(LoginRequiredMixin,generic.ListView):
 
     #ログインユーザーの予約一覧のみ表示
     def get_queryset(self):
-        return Reservation.objects.filter(user=self.request.user).order_by('date') #予約日が近い順に並び替え
+        return Reservation.objects.filter(user=self.request.user, is_visible=False).order_by('date') #予約日が近い順に並び替え,is_visible=False(まだ来店済みを完了していない)で一覧に表示
     
 #予約キャンセル
 class ReserveDeleteView(LoginRequiredMixin,DeleteView):
@@ -598,7 +598,7 @@ class MemberPageView(LoginRequiredMixin,TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # ログインユーザーに関連するMemberオブジェクトを取得し、コンテキストに追加
-        context['member'] = get_object_or_404(Member, user=self.request.user) #Memberモデルのidをここから取得できるようになる。
+        context['member'] = get_object_or_404(Stripe_Customer, user=self.request.user) #Stripe_Customerモデルのidをここから取得できるようになる。
         return context
 
 

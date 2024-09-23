@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}あべろぐ | 有料会員登録{% endblock %}
+
+{% block head %}
+<script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
+<script src="https://js.stripe.com/v3/"></script>
+{% endblock %}
+
+
+{% block contents %}
+<div class="a_detail">
+    <div class="store-h1">
+        <h1>有料会員登録</h1>
+    </div>
+    <hr class="hr1 mb-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+           <p style="color: red;">テストカード番号<br>
+            4242 4242 4242 4242</p>
+            <button class="mt-4 btn btn-danger" type="button" id="checkout-button">有料会員登録を行う</button>
+            {% if subscription.status == "active" %}
+            <p>あなたは有料会員登録済みです</p>
+            {% else %}
+            <p>有料会員ではない{{payment.status}}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // Create an instance of the Stripe object with your publishable API key
+    var stripe = Stripe("pk_test_51Q11x3RwNoxwqPY3pyrduFZJqFQ829E73chC8IBdpDiUfoo5wEYbzjudV9g64kd2LOLVCmWVFUx94sE2IAm14xnT00Pu1xacZK");
+    var checkoutButton = document.getElementById("checkout-button");
+ 
+    checkoutButton.addEventListener("click", function () {
+      fetch("/payment/create_checkout_session/", { /*payment/が必要。第一引数は送信先のURL*/
+        method: "POST",  /*今回はページ内に個人情報含まれていないのでGETメソッドでもいいが念の為ポストで送信*/
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=UTF-8',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+      })
+
+        .then(function (response) {
+            return response.json(); /*jason形式でバックエンドから送られてきたデータをjavascriptのオブジェクト型に変換*/
+        })
+        .then(function (session) {
+            console.log("check3",session)
+          return stripe.redirectToCheckout({ sessionId: session.id });
+        })
+        .then(function (result) {
+            console.log("check4",result)
+          // If redirectToCheckout fails due to a browser or network
+          // error, you should display the localized error message to your
+          // customer using error.message.
+          if (result.error) {
+            alert(result.error.message);
+          }
+        })
+        .catch(function (error) {
+          console.error("Error:", error);
+        });
+    });
+</script>
+
+
+{% endblock %}
+
+
+

@@ -20,6 +20,11 @@ ALLOWED_HOSTS = []
 
 LOGIN_URL = '/accounts/login/'
 
+#stripeのエンドポイント登録
+STRIPE_ENDPOINT_SECRET = 'whsec_8fbad4ddb361563eb5ba4c6703c7562f92eb60768fc5b7fe897b68c378b24642'
+
+STRIPE_PRICE_ID = 'prod_Qu4ATA740XdM0X'
+STRIPE_SECRET_KEY ='sk_test_51Q11x3RwNoxwqPY3wi1UPQQlwb0ZYhxsVPwrsIx0p81p0C7g4tcN3rTzxz7RHcuLpRt4ZX1XM2xltTIionkPNHag00b910fCNA'
 
 # Application definition
 
@@ -36,6 +41,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'django_bootstrap5',
+    'payment.apps.PaymentConfig', #stripe導入
+    'import_export', #CSVとかでDBをバックアップする機能
 ]
 
 MIDDLEWARE = [
