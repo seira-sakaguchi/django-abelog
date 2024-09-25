@@ -23,11 +23,15 @@ class PaymentIndexView(generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         stripe.api_key = settings.STRIPE_SECRET_KEY
-
-        customer = Stripe_Customer.objects.filter(user = self.request.user).first()
+        print("ログインユーザーID",self.request.user.id)
+        customer = Stripe_Customer.objects.filter(user__id = self.request.user.id).first()
+        if customer is None:
+            return {}
+        
         print(f'{customer}'"←現在のログインユーザー")
         client_reference_id=self.request.user.id
         print(f'{client_reference_id}'"←現在のログインID")
+        print(customer.stripeSubscriptionId,"サブスクの会員ID")
         subscription = stripe.Subscription.retrieve(customer.stripeSubscriptionId)
         print("サブスクリプションのjsonデータ")
         print(subscription)
@@ -73,6 +77,7 @@ def create_checkout_session(request):
 #DjangoでWebhookを受け取るためのビュー
 @csrf_exempt
 def stripe_webhook(request):
+    print("stripe_webhookが呼ばれた！")
     stripe.api_key = settings.STRIPE_SECRET_KEY
     endpoint_secret = settings.STRIPE_ENDPOINT_SECRET
     payload = request.body.decode('utf-8')
